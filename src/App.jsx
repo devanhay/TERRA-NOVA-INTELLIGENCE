@@ -349,6 +349,24 @@ export default function App() {
               })
               return merged
             })
+
+            // Download and cache flowsheet details for each project to support multi-device loads
+            for (const cp of cloudProjects) {
+              try {
+                const detailRes = await fetch(`${host}/api/projects/${cp.id}?token=${encodeURIComponent(authToken)}`)
+                if (detailRes.ok) {
+                  const detailData = await detailRes.json()
+                  if (detailData.flowsheet_json) {
+                    localStorage.setItem('chempilot_pfd_' + cp.id, detailData.flowsheet_json)
+                  }
+                }
+              } catch (detailErr) {
+                console.warn(`Failed to fetch flowsheet details for project ${cp.id}:`, detailErr)
+              }
+            }
+
+            // Force reload current active flowsheet if updated
+            window.dispatchEvent(new CustomEvent('chempilot_force_pfd_reload'))
           }
         }
       } catch (err) {
