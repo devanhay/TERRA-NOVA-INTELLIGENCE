@@ -4,9 +4,10 @@ import { UserCheck, Cpu, Calculator, GraduationCap, Play, Square, Copy, Check, F
 
 const thesisCore = new ThesisCore();
 
-const ThesisWorkspace = ({ onSendMessage, messages, isProcessing, activeSubMode, setActiveSubMode, appContext }) => {
+const ThesisWorkspace = ({ onSendMessage, messages, isProcessing, activeSubMode, setActiveSubMode, appContext, activeProjectId }) => {
   const pfd = appContext?.pfd;
   const [ideationList] = useState(thesisCore.getSeedIdeas());
+  // Dynamic state syncing per project
   const [selectedIdea, setSelectedIdea] = useState(null);
   const [methodologyLang, setMethodologyLang] = useState('id');
   
@@ -14,13 +15,19 @@ const ThesisWorkspace = ({ onSendMessage, messages, isProcessing, activeSubMode,
   const [userTopic, setUserTopic] = useState('');
   const [evalResult, setEvalResult] = useState(null);
 
-  // Proposal Builder States
-  const [proposalData, setProposalData] = useState({
-    title: '',
-    background: '',
-    problemStatement: '',
-    objectives: '',
-    methodology: ''
+  // Proposal Builder States (with project persistence)
+  const [proposalData, setProposalData] = useState(() => {
+    const saved = localStorage.getItem(`chempilot_thesis_proposal_${activeProjectId}`);
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return {
+      title: '',
+      background: '',
+      problemStatement: '',
+      objectives: '',
+      methodology: ''
+    };
   });
   const [proposalStatus, setProposalStatus] = useState('');
 
@@ -30,21 +37,77 @@ const ThesisWorkspace = ({ onSendMessage, messages, isProcessing, activeSubMode,
   // Defense Mode States
   const [defenseActive, setDefenseActive] = useState(false);
 
-  // Supervisor Progress Checklist States
-  const [checklist, setChecklist] = useState({
-    title: false,
-    background: false,
-    literature: false,
-    methodology: false,
-    massBalance: false,
-    economics: false
+  // Supervisor Progress Checklist States (with project persistence)
+  const [checklist, setChecklist] = useState(() => {
+    const saved = localStorage.getItem(`chempilot_thesis_checklist_${activeProjectId}`);
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return {
+      title: false,
+      background: false,
+      literature: false,
+      methodology: false,
+      massBalance: false,
+      economics: false
+    };
   });
 
+  // Reload states when project switches
+  React.useEffect(() => {
+    const savedProposal = localStorage.getItem(`chempilot_thesis_proposal_${activeProjectId}`);
+    if (savedProposal) {
+      try { setProposalData(JSON.parse(savedProposal)); } catch (e) {}
+    } else {
+      setProposalData({
+        title: '',
+        background: '',
+        problemStatement: '',
+        objectives: '',
+        methodology: ''
+      });
+    }
+
+    const savedChecklist = localStorage.getItem(`chempilot_thesis_checklist_${activeProjectId}`);
+    if (savedChecklist) {
+      try { setChecklist(JSON.parse(savedChecklist)); } catch (e) {}
+    } else {
+      setChecklist({
+        title: false,
+        background: false,
+        literature: false,
+        methodology: false,
+        massBalance: false,
+        economics: false
+      });
+    }
+    
+    // Reset temporary states
+    setUserTopic('');
+    setEvalResult(null);
+    setLitText('');
+    setDefenseActive(false);
+  }, [activeProjectId]);
+
+  // Autosave proposalData
+  React.useEffect(() => {
+    localStorage.setItem(`chempilot_thesis_proposal_${activeProjectId}`, JSON.stringify(proposalData));
+  }, [proposalData, activeProjectId]);
+
+  // Autosave checklist
+  React.useEffect(() => {
+    localStorage.setItem(`chempilot_thesis_checklist_${activeProjectId}`, JSON.stringify(checklist));
+  }, [checklist, activeProjectId]);
+
   const toggleChecklistItem = (item) => {
-    setChecklist(prev => ({
-      ...prev,
-      [item]: !prev[item]
-    }));
+    setChecklist(prev => {
+      const updated = {
+        ...prev,
+        [item]: !prev[item]
+      };
+      localStorage.setItem(`chempilot_thesis_checklist_${activeProjectId}`, JSON.stringify(updated));
+      return updated;
+    });
   };
 
   // Determine active examiner based on the last message from assistant

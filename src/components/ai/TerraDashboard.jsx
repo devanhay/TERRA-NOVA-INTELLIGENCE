@@ -115,6 +115,16 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
             if (Array.isArray(parsed) && parsed.length > 0) {
               setProjects(parsed);
               localStorage.setItem('chempilot_terra_projects', data.ai_projects_json);
+              
+              // Unpack and write individual thesis states back to localStorage
+              parsed.forEach(p => {
+                if (p.thesis_proposal) {
+                  localStorage.setItem(`chempilot_thesis_proposal_${p.id}`, JSON.stringify(p.thesis_proposal));
+                }
+                if (p.thesis_checklist) {
+                  localStorage.setItem(`chempilot_thesis_checklist_${p.id}`, JSON.stringify(p.thesis_checklist));
+                }
+              });
             }
           }
         }
@@ -129,8 +139,26 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
   useEffect(() => {
     if (!projects || projects.length === 0) return;
     
+    // Enrich projects metadata with thesis workspace draft and checklist data
+    const enrichedProjects = projects.map(p => {
+      let thesis_proposal = null;
+      let thesis_checklist = null;
+      try {
+        const rawProp = localStorage.getItem(`chempilot_thesis_proposal_${p.id}`);
+        if (rawProp) thesis_proposal = JSON.parse(rawProp);
+        const rawCheck = localStorage.getItem(`chempilot_thesis_checklist_${p.id}`);
+        if (rawCheck) thesis_checklist = JSON.parse(rawCheck);
+      } catch (e) {}
+
+      return {
+        ...p,
+        thesis_proposal,
+        thesis_checklist
+      };
+    });
+
     // Save to local storage
-    localStorage.setItem('chempilot_terra_projects', JSON.stringify(projects));
+    localStorage.setItem('chempilot_terra_projects', JSON.stringify(enrichedProjects));
     
     const token = localStorage.getItem('chempilot_auth_token') || '';
     if (!token) return;
@@ -141,7 +169,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
         await fetch(`${host}/api/auth/me/ai-projects?token=${encodeURIComponent(token)}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ai_projects_json: JSON.stringify(projects) })
+          body: JSON.stringify({ ai_projects_json: JSON.stringify(enrichedProjects) })
         });
       } catch (err) {
         console.warn("Failed to auto-save AI workspace to cloud:", err);
@@ -690,6 +718,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
                     activeSubMode={activeThesisSubMode}
                     setActiveSubMode={setActiveThesisSubMode}
                     appContext={appContext}
+                    activeProjectId={activeProjectId}
                   />
                 </div>
                 
