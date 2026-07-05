@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Primary Meta -->
+    <title>ChemPilot OS — Terra Nova Intelligence</title>
+    <meta name="description" content="Advanced chemical engineering workspace with PFD Builder, thermodynamic calculators, distillation design, and AI companion. Built for Chemical Engineering students." />
+    <meta name="theme-color" content="#020208" />
+
+    <!-- Open Graph / Social Sharing -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ChemPilot OS — Terra Nova Intelligence" />
+    <meta property="og:description" content="Advanced chemical engineering workspace. PFD Builder, thermodynamic calculators, McCabe-Thiele solver, and AI tutor." />
+    <meta property="og:url" content="https://chempilot-phase1.vercel.app" />
+    <meta property="og:image" content="https://chempilot-phase1.vercel.app/og-image.png" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="ChemPilot OS — Terra Nova Intelligence" />
+    <meta name="twitter:description" content="Advanced chemical engineering workspace with PFD Builder, AI Companion, and thermodynamic solvers." />
+
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+      if (window.pdfjsLib) {
+        window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
