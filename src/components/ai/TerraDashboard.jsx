@@ -100,6 +100,58 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
     }
   }, [activeChatId, activeProjectId, projects]);
 
+  // Sync AI Workspace (chat projects and histories) from cloud database on mount
+  useEffect(() => {
+    const syncCloudWorkspace = async () => {
+      const token = localStorage.getItem('chempilot_auth_token') || '';
+      if (!token) return;
+      const host = import.meta.env.VITE_API_URL || '';
+      try {
+        const res = await fetch(`${host}/api/auth/me/ai-projects?token=${encodeURIComponent(token)}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.ai_projects_json) {
+            const parsed = JSON.parse(data.ai_projects_json);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              setProjects(parsed);
+              localStorage.setItem('chempilot_terra_projects', data.ai_projects_json);
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to sync cloud AI workspace:", err);
+      }
+    };
+    syncCloudWorkspace();
+  }, []);
+
+  // Debounced auto-save of AI Workspace to cloud database
+  useEffect(() => {
+    if (!projects || projects.length === 0) return;
+    
+    // Save to local storage
+    localStorage.setItem('chempilot_terra_projects', JSON.stringify(projects));
+    
+    const token = localStorage.getItem('chempilot_auth_token') || '';
+    if (!token) return;
+    
+    const host = import.meta.env.VITE_API_URL || '';
+    const timer = setTimeout(async () => {
+      try {
+        await fetch(`${host}/api/auth/me/ai-projects?token=${encodeURIComponent(token)}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ai_projects_json: JSON.stringify(projects) })
+        });
+      } catch (err) {
+        console.warn("Failed to auto-save AI workspace to cloud:", err);
+      }
+    }, 1500);
+    
+    return () => clearTimeout(timer);
+  }, [projects]);
+
+
   const updateProjectChatMessages = (newMsgsOrFn) => {
     setMessages(prev => {
       const nextVal = typeof newMsgsOrFn === 'function' ? newMsgsOrFn(prev) : newMsgsOrFn;

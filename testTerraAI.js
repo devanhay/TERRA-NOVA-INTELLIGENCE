@@ -7,8 +7,9 @@ console.log("Input: 'I am so stressed, I don't understand how reflux affects dis
 
 const result = engine.processInput("I am so stressed, I don't understand how reflux affects distillation purity.", { activeProject: 'Methanol Tower Design' });
 
-console.log("1. DETECTED INTENT:");
-console.log("  ", result.detectedIntent);
+console.log("1. DETECTED INTENT (CORE & MODE):");
+console.log("   Core:", result.detectedCore);
+console.log("   Mode:", result.detectedMode);
 
 console.log("\n2. EMOTION CORE STATE:");
 console.log("   Stress:", result.emotionState.stress, "%");

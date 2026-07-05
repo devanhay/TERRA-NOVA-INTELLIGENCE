@@ -4,3 +4,5 @@ sqlalchemy
 google-genai
 python-dotenv
 python-multipart
+PyJWT
+bcrypt

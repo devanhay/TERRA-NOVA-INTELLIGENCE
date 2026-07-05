@@ -35,10 +35,16 @@ def get_embedding(text: str) -> List[float]:
         print(f"Error fetching embedding: {e}")
         return []
 
+import logging
+
 def cosine_similarity(v1: List[float], v2: List[float]) -> float:
-    if not v1 or not v2 or len(v1) != len(v2):
+    if not v1 or not v2:
+        return 0.0
+    if len(v1) != len(v2):
+        logging.warning(f"Embedding dimension mismatch: len(v1)={len(v1)}, len(v2)={len(v2)}. This may indicate a change in the embedding model.")
         return 0.0
     dot_prod = sum(a * b for a, b in zip(v1, v2))
+
     mag1 = math.sqrt(sum(a * a for a in v1))
     mag2 = math.sqrt(sum(b * b for b in v2))
     if mag1 == 0.0 or mag2 == 0.0:

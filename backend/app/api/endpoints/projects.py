@@ -1,3 +1,6 @@
+import os
+import jwt
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Optional
@@ -6,6 +9,10 @@ from app.db.session import get_db
 from app.models.project import Project as ProjectModel, Flowsheet as FlowsheetModel
 
 router = APIRouter()
+
+# JWT configuration
+JWT_SECRET = os.getenv("JWT_SECRET", "chempilot-os-jwt-secret-key-2026-secure")
+JWT_ALGORITHM = "HS256"
 
 # Schema definitions
 class FlowsheetBase(BaseModel):
@@ -19,19 +26,21 @@ class ProjectCreate(BaseModel):
 class ProjectResponse(BaseModel):
     id: str
     name: str
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         from_attributes = True
 
 def get_user_id_from_token(token: Optional[str]) -> Optional[int]:
-    if not token or ":" not in token:
+    if not token:
         return None
     try:
-        return int(token.split(":")[0])
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        return payload.get("user_id")
     except Exception:
         return None
+
 
 @router.get("/", response_model=List[ProjectResponse])
 def list_projects(token: Optional[str] = None, db: Session = Depends(get_db)):
@@ -44,15 +53,7 @@ def list_projects(token: Optional[str] = None, db: Session = Depends(get_db)):
         # Guest mode, show projects where user_id is null
         projects = db.query(ProjectModel).filter(ProjectModel.user_id.is_(None)).all()
         
-    res = []
-    for p in projects:
-        res.append({
-            "id": p.id,
-            "name": p.name,
-            "created_at": p.created_at.isoformat(),
-            "updated_at": p.updated_at.isoformat()
-        })
-    return res
+    return projects
 
 @router.get("/{project_id}")
 def get_project(project_id: str, token: Optional[str] = None, db: Session = Depends(get_db)):
@@ -74,8 +75,8 @@ def get_project(project_id: str, token: Optional[str] = None, db: Session = Depe
     return {
         "id": project.id,
         "name": project.name,
-        "created_at": project.created_at.isoformat(),
-        "updated_at": project.updated_at.isoformat(),
+        "created_at": project.created_at,
+        "updated_at": project.updated_at,
         "flowsheet_json": flowsheet.flowsheet_json if flowsheet else "{}"
     }
 
@@ -90,10 +91,14 @@ def save_project(payload: ProjectCreate, token: Optional[str] = None, db: Sessio
         project = ProjectModel(id=payload.id, name=payload.name, user_id=user_id)
         db.add(project)
     else:
+        # Prevent project hijacking:
+        # If the project is owned by someone else (not the current user), return 403 Forbidden
+        if project.user_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN, 
+                detail="Anda tidak memiliki izin untuk memodifikasi proyek ini."
+            )
         project.name = payload.name
-        # Associate user_id if project is saved by logged-in user
-        if user_id is not None:
-            project.user_id = user_id
         db.add(project)
         
     db.commit()
@@ -123,8 +128,9 @@ def delete_project(project_id: str, token: Optional[str] = None, db: Session = D
         
     project = query.first()
     if not project:
-        raise HTTPException(status_code=404, detail="Proyek tidak ditemukan.")
+        raise HTTPException(status_code=404, detail="Proyek tidak ditemukan atau Anda tidak memiliki akses.")
         
     db.delete(project)
     db.commit()
     return {"status": "success", "message": f"Project {project_id} deleted."}
+

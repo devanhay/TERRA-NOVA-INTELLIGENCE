@@ -9,6 +9,8 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     password_hash = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+    ai_projects_json = Column(Text, nullable=True) # Stores the user's AI Dashboard workspace projects and chat history
+
 
 class Project(Base):
     __tablename__ = "projects"
@@ -33,6 +35,9 @@ class ChatMessage(Base):
     role = Column(String, nullable=False) # "user" or "model"
     content = Column(Text, nullable=False)
     timestamp = Column(DateTime(timezone=True), server_default=func.now())
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True) # Nullable for guest mode compatibility
+    project_id = Column(String, ForeignKey("projects.id", ondelete="CASCADE"), nullable=True) # Nullable
+
 
 class DocumentChunk(Base):
     __tablename__ = "document_chunks"
