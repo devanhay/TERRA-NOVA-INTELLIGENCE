@@ -997,3 +997,15 @@
     border-radius: var(--r-md) !important;
   }
 }
+
+/* ═══════════════════════════════════════════════
+   15. OS WORKSPACE GRID (AI RESEARCHER & THESIS STUDIO) MOBILE
+   ═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .os-workspace-grid {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+    gap: 16px !important;
+  }
+}
+

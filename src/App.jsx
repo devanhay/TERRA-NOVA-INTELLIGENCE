@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import {
   LayoutDashboard, Workflow, LayoutGrid, BookOpen, Library,
   FlaskConical, ArrowLeftRight, Scale, Zap, Thermometer,
@@ -24,6 +24,7 @@ import BookLibrary from './components/BookLibrary'
 import AuthModal from './components/AuthModal'
 import ThesisStudio from './components/ThesisStudio'
 import AIResearcher from './components/AIResearcher'
+import IndustrialStudio from './components/IndustrialStudio'
 
 // ── BOOT SEQUENCE ──────────────────────────────
 const BOOT_LINES = [
@@ -139,7 +140,7 @@ const NAV = [
   { id: 'mech',      Icon: Wrench,          label: 'Mechanical',         group: 'FUTURE MODULES', badge: 'SOON' },
   { id: 'civil',     Icon: Building2,       label: 'Civil',              group: 'FUTURE MODULES', badge: 'SOON' },
   { id: 'elec',      Icon: Cpu,             label: 'Electrical',         group: 'FUTURE MODULES', badge: 'SOON' },
-  { id: 'ind',       Icon: Factory,         label: 'Industrial',         group: 'FUTURE MODULES', badge: 'SOON' },
+  { id: 'ind',       Icon: Factory,         label: 'Industrial Studio',  group: 'INDUSTRIAL ENGINEERING' },
 ]
 
 const PAGE_META = {
@@ -230,6 +231,18 @@ export default function App() {
   const [booted, setBooted] = useState(false)
   const [bootVisible, setBootVisible] = useState(true)
   const [active, setActive] = useState('home')
+  const [engineeringPersona, setEngineeringPersona] = useState(() => {
+    return localStorage.getItem('engineeros_persona') || 'ALL'
+  })
+  const [collapsedGroups, setCollapsedGroups] = useState({
+    'FUTURE MODULES': true
+  })
+  const toggleGroup = (groupName) => {
+    setCollapsedGroups(prev => ({
+      ...prev,
+      [groupName]: !prev[groupName]
+    }))
+  }
   const [clock, setClock] = useState(new Date())
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
@@ -547,7 +560,23 @@ export default function App() {
     reader.readAsText(file)
   }
 
-  const groups = [...new Set(NAV.map(n => n.group))]
+  const filteredNAV = useMemo(() => {
+    return NAV.filter(n => {
+      // Core OS and Global Ecosystem are always visible
+      if (['home', 'ai', 'sims', 'hub', 'formulas', 'library', 'research', 'games', 'thesis'].includes(n.id)) {
+        return true;
+      }
+      if (engineeringPersona === 'CHEMICAL') {
+        return ['pfd', 'distill', 'mass', 'energy', 'thermo', 'reaction', 'converter'].includes(n.id);
+      }
+      if (engineeringPersona === 'INDUSTRIAL') {
+        return ['ind', 'converter'].includes(n.id);
+      }
+      return true; // ALL shows everything
+    });
+  }, [engineeringPersona]);
+
+  const groups = [...new Set(filteredNAV.map(n => n.group))];
   const meta = PAGE_META[active] || {}
 
   return (
@@ -599,31 +628,72 @@ export default function App() {
             {!isSidebarCollapsed && <div className="brand-meta">Terra Nova Intelligence</div>}
           </div>
 
-          <nav className="sidebar-nav">
-            {groups.map(g => (
-              <div key={g}>
-                {!isSidebarCollapsed && <div className="nav-group-label">{g}</div>}
-                {NAV.filter(n => n.group === g).map((n, i) => (
-                  <button key={n.id}
-                    className={`nav-btn ${active === n.id ? 'active' : ''}`}
-                    onClick={() => { setActive(n.id); setIsMobileSidebarOpen(false); }}
-                    style={{ animationDelay: `${i * 40}ms` }}
-                  >
-                    <span className="nav-icon"><n.Icon size={15} strokeWidth={1.8} /></span>
-                    {!isSidebarCollapsed && <span className="nav-label">{n.label}</span>}
-                    {!isSidebarCollapsed && n.badge && <span className="nav-badge">{n.badge}</span>}
+          {!isSidebarCollapsed && (
+            <div className="persona-switcher-container" style={{ padding: '0 16px 14px 16px', borderBottom: '1px solid var(--border-1)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ fontSize: '0.58rem', color: '#64748B', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>ENGINEERING PERSONA</div>
+              <select
+                value={engineeringPersona}
+                onChange={e => {
+                  setEngineeringPersona(e.target.value);
+                  localStorage.setItem('engineeros_persona', e.target.value);
+                }}
+                style={{
+                  width: '100%', background: 'rgba(15,23,42,0.8)', border: '1px solid #1E293B',
+                  borderRadius: 6, padding: '6px 10px', fontSize: '0.74rem', color: '#F1F5F9',
+                  outline: 'none', cursor: 'pointer', fontFamily: 'var(--font-body)'
+                }}
+              >
+                <option value="ALL">All Disciplines</option>
+                <option value="CHEMICAL">Chemical Engineering</option>
+                <option value="INDUSTRIAL">Industrial Engineering</option>
+              </select>
+            </div>
+          )}
 
-                    {/* Collapsed Hover Tooltips */}
-                    {isSidebarCollapsed && (
-                      <div className="sidebar-tooltip">
-                        {n.label}
-                        {n.badge && <span className="tooltip-badge">{n.badge}</span>}
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            ))}
+          <nav className="sidebar-nav">
+            {groups.map(g => {
+              const isCollapsed = collapsedGroups[g];
+              return (
+                <div key={g} style={{ marginBottom: isCollapsed ? 6 : 14 }}>
+                  {!isSidebarCollapsed && (
+                    <div 
+                      className="nav-group-label" 
+                      onClick={() => toggleGroup(g)}
+                      style={{ 
+                        cursor: 'pointer', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between',
+                        userSelect: 'none',
+                        padding: '4px 0'
+                      }}
+                    >
+                      <span>{g}</span>
+                      <span style={{ fontSize: '0.5rem', opacity: 0.5, transition: 'transform 0.15s', transform: isCollapsed ? 'rotate(-90deg)' : 'rotate(0)' }}>▼</span>
+                    </div>
+                  )}
+                  {(!isCollapsed || isSidebarCollapsed) && filteredNAV.filter(n => n.group === g).map((n, i) => (
+                    <button key={n.id}
+                      className={`nav-btn ${active === n.id ? 'active' : ''}`}
+                      onClick={() => { setActive(n.id); setIsMobileSidebarOpen(false); }}
+                      style={{ animationDelay: `${i * 40}ms` }}
+                    >
+                      <span className="nav-icon"><n.Icon size={15} strokeWidth={1.8} /></span>
+                      {!isSidebarCollapsed && <span className="nav-label">{n.label}</span>}
+                      {!isSidebarCollapsed && n.badge && <span className="nav-badge">{n.badge}</span>}
+
+                      {/* Collapsed Hover Tooltips */}
+                      {isSidebarCollapsed && (
+                        <div className="sidebar-tooltip">
+                          {n.label}
+                          {n.badge && <span className="tooltip-badge">{n.badge}</span>}
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              );
+            })}
 
             {/* PROJECTS SECTION */}
             <div className="sidebar-projects-section">
@@ -813,9 +883,10 @@ export default function App() {
             
             {active === 'thesis'    && <ThesisStudio key={currentProjectId} projectId={currentProjectId} appContext={appContext} />}
             {active === 'research'  && <AIResearcher key={currentProjectId} projectId={currentProjectId} />}
+            {active === 'ind'       && <IndustrialStudio />}
 
             {/* EngineerOS Future Modules Placeholders */}
-            {['sims', 'games', 'mech', 'civil', 'elec', 'ind'].includes(active) && (
+            {['sims', 'games', 'mech', 'civil', 'elec'].includes(active) && (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', textAlign: 'center', color: 'var(--text-2)' }}>
                 <div className="status-led" style={{ width: 12, height: 12, background: 'var(--accent)', boxShadow: '0 0 20px var(--accent)', marginBottom: 24, animation: 'pulse 2s infinite' }} />
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 500, color: '#fff', marginBottom: 8 }}>Module in Development</h2>

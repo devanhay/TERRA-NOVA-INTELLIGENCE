@@ -656,6 +656,12 @@
   box-shadow: var(--shadow-hover);
 }
 
+.bubble-row.user .bubble-text-content strong,
+.bubble-row.user .bubble-text-content b {
+  font-weight: 700 !important;
+  color: #000000 !important;
+}
+
 .bubble-row.user.general .bubble-text-content {
   background: linear-gradient(135deg, #4cc9f0 0%, #0096c7 100%);
   border: none;
@@ -673,6 +679,12 @@
   border: var(--glass-border);
   border-radius: 20px 20px 20px 4px; /* Pointy on bottom-left */
   color: #e2e8f0;
+}
+
+.bubble-row.assistant .bubble-text-content strong,
+.bubble-row.assistant .bubble-text-content b {
+  font-weight: 700 !important;
+  color: #ffffff !important;
 }
 
 /* ── Error Bubble Styles ─────────────────────────────── */

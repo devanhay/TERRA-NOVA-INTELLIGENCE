@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Search, BookOpen, FileText, Send, Radio, User, Cpu, 
-  Bookmark, Copy, ExternalLink, ArrowUp, Sparkles, FolderHeart, 
+import {
+  Search, BookOpen, FileText, Send, Radio, User, Cpu,
+  Bookmark, Copy, ExternalLink, ArrowUp, Sparkles, FolderHeart,
   Activity, Award, Trash2
 } from 'lucide-react';
 import { GeminiService } from '../core/terraAI/GeminiService';
@@ -187,14 +187,14 @@ Write in a friendly "Indo-English" mix.`;
 
   return (
     <div className="os-workspace-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', height: 'calc(100vh - 120px)', gap: 16 }}>
-      
+
       {/* Left Workspace Panel */}
-      <div 
-        className="card" 
-        style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          overflow: 'hidden', 
+      <div
+        className="card"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
           padding: 24,
           background: 'rgba(10, 7, 24, 0.40)',
           backdropFilter: 'var(--glass-blur)',
@@ -209,7 +209,7 @@ Write in a friendly "Indo-English" mix.`;
               AI Researcher
             </h2>
           </div>
-          
+
           <div className="thesis-subtabs" style={{ display: 'flex', gap: 4 }}>
             {[
               { id: 'SEARCH', label: 'Search Literature', icon: <Search size={13} /> },
@@ -220,9 +220,9 @@ Write in a friendly "Indo-English" mix.`;
                 key={tab.id}
                 className={`subtab-btn ${activeTab === tab.id ? 'active' : ''}`}
                 onClick={() => setActiveTab(tab.id)}
-                style={{ 
-                  padding: '8px 12px', 
-                  fontSize: '0.72rem', 
+                style={{
+                  padding: '8px 12px',
+                  fontSize: '0.72rem',
                   borderRadius: 6,
                   display: 'flex',
                   alignItems: 'center',
@@ -242,7 +242,7 @@ Write in a friendly "Indo-English" mix.`;
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', paddingRight: 6 }} className="thin-scrollbar">
-          
+
           {activeTab === 'SEARCH' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <p className="page-desc" style={{ color: '#94a3b8', fontSize: '0.82rem' }}>
@@ -254,12 +254,12 @@ Write in a friendly "Indo-English" mix.`;
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Masukkan topik riset (e.g. chemical engineering column, distillation control)..."
-                  style={{ 
-                    flex: 1, 
-                    padding: 12, 
-                    background: 'rgba(0,0,0,0.3)', 
-                    border: '1px solid rgba(255,255,255,0.08)', 
-                    borderRadius: 8, 
+                  style={{
+                    flex: 1,
+                    padding: 12,
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: 8,
                     color: '#fff',
                     outline: 'none',
                     fontSize: '0.82rem'
@@ -272,12 +272,12 @@ Write in a friendly "Indo-English" mix.`;
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {searchResults.map(paper => (
-                  <div 
-                    key={paper.id} 
-                    className="glass-panel" 
-                    style={{ 
-                      padding: 20, 
-                      borderRadius: 8, 
+                  <div
+                    key={paper.id}
+                    className="glass-panel"
+                    style={{
+                      padding: 20,
+                      borderRadius: 8,
                       background: 'rgba(255,255,255,0.01)',
                       border: '1px solid rgba(255,255,255,0.04)',
                       transition: 'transform 0.2s ease'
@@ -285,7 +285,7 @@ Write in a friendly "Indo-English" mix.`;
                   >
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 6 }}>
                       <h4 style={{ margin: 0, fontSize: '0.92rem', color: '#fff', fontWeight: 700, lineHeight: 1.4 }}>{paper.title}</h4>
-                      <button 
+                      <button
                         onClick={() => {
                           if (savedPapers.some(p => p.title === paper.title)) return;
                           setSavedPapers([...savedPapers, paper]);
@@ -297,7 +297,7 @@ Write in a friendly "Indo-English" mix.`;
                     </div>
                     <small style={{ color: '#64748b', fontSize: '0.7rem' }}>{paper.authors} — {paper.published}</small>
                     <p style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: 10, lineHeight: 1.5 }}>{paper.summary}</p>
-                    
+
                     <div style={{ marginTop: 14, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 10 }}>
                       <a href={paper.link} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.74rem', color: 'var(--accent)', textDecoration: 'none' }}>
                         <ExternalLink size={12} /> Buka PDF ArXiv
@@ -322,7 +322,7 @@ Write in a friendly "Indo-English" mix.`;
                     <div key={paper.id} className="glass-panel" style={{ padding: 18, borderRadius: 8, background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.04)' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
                         <h4 style={{ margin: 0, fontSize: '0.9rem', color: '#fff', fontWeight: 700 }}>{paper.title}</h4>
-                        <button 
+                        <button
                           onClick={() => setSavedPapers(savedPapers.filter(p => p.id !== paper.id))}
                           style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', padding: 2 }}
                         >
@@ -330,7 +330,7 @@ Write in a friendly "Indo-English" mix.`;
                         </button>
                       </div>
                       <small style={{ color: '#64748b', fontSize: '0.7rem' }}>{paper.authors}</small>
-                      
+
                       <div style={{ marginTop: 14, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                         <button className="secondary-btn" onClick={() => copyCitation(paper, 'APA')} style={{ fontSize: '0.68rem', padding: '6px 12px' }}>Copy APA</button>
                         <button className="secondary-btn" onClick={() => copyCitation(paper, 'IEEE')} style={{ fontSize: '0.68rem', padding: '6px 12px' }}>Copy IEEE</button>
@@ -353,15 +353,15 @@ Write in a friendly "Indo-English" mix.`;
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Mulai menulis catatan akademis..."
-                style={{ 
-                  width: '100%', 
-                  minHeight: '50vh', 
-                  padding: 14, 
-                  background: 'rgba(0,0,0,0.3)', 
-                  border: '1px solid rgba(255,255,255,0.08)', 
-                  borderRadius: 8, 
-                  color: '#fff', 
-                  fontSize: '0.85rem', 
+                style={{
+                  width: '100%',
+                  minHeight: '50vh',
+                  padding: 14,
+                  background: 'rgba(0,0,0,0.3)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 8,
+                  color: '#fff',
+                  fontSize: '0.85rem',
                   lineHeight: 1.6,
                   outline: 'none',
                   boxSizing: 'border-box'
@@ -374,12 +374,12 @@ Write in a friendly "Indo-English" mix.`;
       </div>
 
       {/* Right AI Chat Sidebar - iOS Dynamic UX Context */}
-      <div 
-        className="card" 
-        style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          overflow: 'hidden', 
+      <div
+        className="card"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
           padding: 20,
           background: 'rgba(10, 7, 24, 0.40)',
           backdropFilter: 'var(--glass-blur)',
@@ -396,24 +396,24 @@ Write in a friendly "Indo-English" mix.`;
 
         {/* Chat Thread Container with .terra-dashboard wrapper to load bubble CSS styles correctly */}
         <div className="terra-dashboard" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <div 
-            className="terra-chat-panel-rebuilt scale-md thin-scrollbar" 
-            style={{ 
-              flex: 1, 
-              overflowY: 'auto', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: 14, 
-              paddingRight: 4, 
-              marginBottom: 16 
+          <div
+            className="terra-chat-panel-rebuilt scale-md thin-scrollbar"
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 14,
+              paddingRight: 4,
+              marginBottom: 16
             }}
           >
             {chatMessages.map((msg, index) => {
               const isUser = msg.role === 'user';
               return (
-                <div 
-                  key={index} 
-                  className={`bubble-row ${isUser ? 'user general' : 'assistant'}`} 
+                <div
+                  key={index}
+                  className={`bubble-row ${isUser ? 'user general' : 'assistant'}`}
                   style={{ display: 'flex', gap: 8, alignItems: 'flex-end', justifyContent: isUser ? 'flex-end' : 'flex-start' }}
                 >
                   {!isUser && (
@@ -445,30 +445,30 @@ Write in a friendly "Indo-English" mix.`;
             onKeyDown={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
             placeholder={isProcessing ? 'Memikirkan jawaban...' : 'Tanya paper/metodologi...'}
             disabled={isProcessing}
-            style={{ 
-              flex: 1, 
-              padding: '10px 14px', 
-              background: 'rgba(0,0,0,0.3)', 
-              border: '1px solid rgba(255,255,255,0.08)', 
-              borderRadius: 20, 
-              color: '#fff', 
+            style={{
+              flex: 1,
+              padding: '10px 14px',
+              background: 'rgba(0,0,0,0.3)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 20,
+              color: '#fff',
               fontSize: '0.78rem',
               outline: 'none',
               transition: 'border 0.2s'
             }}
           />
-          <button 
-            className="primary-btn" 
+          <button
+            className="primary-btn"
             onClick={() => handleSendMessage()}
             disabled={isProcessing}
-            style={{ 
-              width: 36, 
-              height: 36, 
-              borderRadius: '50%', 
-              background: 'var(--accent-gradient)', 
-              border: 'none', 
-              display: 'flex', 
-              alignItems: 'center', 
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              background: 'var(--accent-gradient)',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               flexShrink: 0,

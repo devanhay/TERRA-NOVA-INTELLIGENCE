@@ -22,7 +22,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
-import { Library, Workflow, Settings2 } from 'lucide-react'
+import { Library, Workflow, Settings2, AlertTriangle, TrendingDown, Layers, Thermometer, Wind, XCircle, Flame, Sparkles, Play, CheckCircle2, FlaskConical, Bell, HelpCircle } from 'lucide-react'
 
 import {
   CHEMICALS, PRESETS, vleFlash, bubblePointT, dewPointT, relVol,
@@ -698,7 +698,15 @@ function TemplatesModal({ onLoad, onClose }) {
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: '1.6rem' }}>{t.icon}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 8, background: 'rgba(76, 201, 240, 0.1)', color: 'var(--accent)' }}>
+                    {t.id === 'flash_separation' ? <Wind size={18} /> :
+                     t.id === 'distillation_btx' || t.id === 'ethanol_distillation' ? <Layers size={18} /> :
+                     t.id === 'ammonia_synthesis' || t.id === 'biodiesel_transesterification' ? <FlaskConical size={18} /> :
+                     t.id === 'heat_recovery' ? <Flame size={18} /> :
+                     t.id === 'compressor_station' ? <TrendingDown size={18} /> :
+                     t.id === 'hydrogen_pem' ? <Sparkles size={18} /> :
+                     <Workflow size={18} />}
+                  </div>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: '0.82rem', color: '#F1F5F9' }}>{t.name}</div>
                     <div style={{ fontSize: '0.6rem', color: '#475569', marginTop: 1 }}>{t.category}</div>
@@ -1241,8 +1249,8 @@ function Inspector({ node, params, streams, nodes, onParam, onTag, status, activ
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-        <div style={{ width: 36, height: 36, borderRadius: 9, flexShrink: 0, background: `${eq.color}15`, border: `1px solid ${eq.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
-          {eq.icon}
+        <div style={{ width: 36, height: 36, borderRadius: 9, flexShrink: 0, background: `${eq.color}15`, border: `1px solid ${eq.color}40`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <EquipIcon type={node.type} color={eq.color} size={24} status={status} />
         </div>
         <div>
           <div style={{ fontWeight: 700, fontSize: '0.85rem', color: '#F1F5F9' }}>{node.label}</div>
@@ -2888,7 +2896,9 @@ Do not output any markdown formatting, backticks, or explanation outside the JSO
       return (
         <div style={hudStyle}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-            <span style={{ fontSize: '1.1rem' }}>{eq.icon}</span>
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <EquipIcon type={n.type} color={eq.color} size={22} status={n.calculated ? 'calculated' : ''} />
+            </span>
             <div>
               <div style={{ fontWeight: 700, color: '#F1F5F9', fontSize: '0.78rem' }}>{n.tag}</div>
               <div style={{ fontSize: '0.58rem', color: eq.color, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{eq.label}</div>
@@ -3316,7 +3326,9 @@ Do not output any markdown formatting, backticks, or explanation outside the JSO
                 onMouseOver={e => { e.currentTarget.style.borderColor = eq.color + '50'; e.currentTarget.style.color = '#F1F5F9'; e.currentTarget.style.background = eq.color + '08' }}
                 onMouseOut={e => { e.currentTarget.style.borderColor = '#1E293B'; e.currentTarget.style.color = '#94A3B8'; e.currentTarget.style.background = 'rgba(15,23,42,0.6)' }}
               >
-                <span style={{ fontSize: '0.95rem', flexShrink: 0 }}>{eq.icon}</span>
+                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <EquipIcon type={eq.type} color={eq.color} size={20} />
+                </span>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: '0.68rem' }}>{eq.label}</div>
                   <div style={{ fontSize: '0.54rem', color: '#475569', marginTop: 1 }}>{eq.category}</div>
@@ -3985,7 +3997,15 @@ Do not output any markdown formatting, backticks, or explanation outside the JSO
                     }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ fontSize: '1.1rem' }}>{r.icon}</span>
+                          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            {r.severity === 'critical' ? (
+                              <XCircle size={15} style={{ color: '#FF4D6A' }} />
+                            ) : r.severity === 'warning' ? (
+                              <AlertTriangle size={15} style={{ color: '#F5A623' }} />
+                            ) : (
+                              <HelpCircle size={15} style={{ color: '#38BDF8' }} />
+                            )}
+                          </span>
                           <div>
                             <div style={{ fontSize: '0.74rem', fontWeight: 700, color: '#F1F5F9' }}>{r.type}</div>
                             <div style={{ fontFamily: 'monospace', fontSize: '0.58rem', color: tagCol }}>{r.unit}</div>

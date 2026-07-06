@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  GraduationCap, BookOpen, CheckCircle, Award, Play, 
+import {
+  GraduationCap, BookOpen, CheckCircle, Award, Play,
   Trash2, Plus, FileText, Send, Radio, User, Cpu, X, Copy,
   ArrowUp, Sparkles, Activity, FileCheck, ShieldAlert
 } from 'lucide-react';
@@ -173,14 +173,14 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
 
   return (
     <div className="os-workspace-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 380px', height: 'calc(100vh - 120px)', gap: 16 }}>
-      
+
       {/* Left Workspace Panel */}
-      <div 
-        className="card" 
-        style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          overflow: 'hidden', 
+      <div
+        className="card"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
           padding: 24,
           background: 'rgba(10, 7, 24, 0.40)',
           backdropFilter: 'var(--glass-blur)',
@@ -195,7 +195,7 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
               Thesis Studio
             </h2>
           </div>
-          
+
           {/* Sub Navigation - Emojis removed, replaced with Lucide icons */}
           <div className="thesis-subtabs" style={{ display: 'flex', gap: 4 }}>
             {[
@@ -210,9 +210,9 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
                 key={tab.id}
                 className={`subtab-btn ${activeTab === tab.id ? 'active' : ''}`}
                 onClick={() => { setActiveTab(tab.id); if (tab.id !== 'DEFENSE') setDefenseActive(false); }}
-                style={{ 
-                  padding: '8px 12px', 
-                  fontSize: '0.72rem', 
+                style={{
+                  padding: '8px 12px',
+                  fontSize: '0.72rem',
                   borderRadius: 6,
                   display: 'flex',
                   alignItems: 'center',
@@ -233,7 +233,7 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
 
         {/* Tab Contents */}
         <div style={{ flex: 1, overflowY: 'auto', paddingRight: 6 }} className="thin-scrollbar">
-          
+
           {activeTab === 'IDEATION' && (
             <div>
               <p className="page-desc" style={{ color: '#94a3b8', fontSize: '0.82rem', marginBottom: 20 }}>
@@ -246,11 +246,11 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
                       key={idea.id}
                       onClick={() => setSelectedIdea(idea)}
                       className={`idea-card ${selectedIdea?.id === idea.id ? 'selected' : ''}`}
-                      style={{ 
-                        padding: 14, 
-                        borderRadius: 8, 
-                        border: selectedIdea?.id === idea.id ? '1px solid rgba(168, 85, 247, 0.3)' : '1px solid rgba(255,255,255,0.05)', 
-                        cursor: 'pointer', 
+                      style={{
+                        padding: 14,
+                        borderRadius: 8,
+                        border: selectedIdea?.id === idea.id ? '1px solid rgba(168, 85, 247, 0.3)' : '1px solid rgba(255,255,255,0.05)',
+                        cursor: 'pointer',
                         background: selectedIdea?.id === idea.id ? 'rgba(168, 85, 247, 0.08)' : 'rgba(0,0,0,0.2)',
                         transition: 'all 0.2s'
                       }}
@@ -261,11 +261,11 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
                   ))}
                 </div>
 
-                <div 
-                  className="glass-panel" 
-                  style={{ 
-                    padding: 20, 
-                    borderRadius: 8, 
+                <div
+                  className="glass-panel"
+                  style={{
+                    padding: 20,
+                    borderRadius: 8,
                     background: 'rgba(255,255,255,0.01)',
                     border: '1px solid rgba(255,255,255,0.03)'
                   }}
@@ -274,15 +274,15 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
                     <div>
                       <h4 style={{ margin: '0 0 12px 0', color: '#c084fc', fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700 }}>{selectedIdea.title}</h4>
                       <p style={{ fontSize: '0.82rem', color: '#cbd5e1', lineHeight: 1.6, marginBottom: 16 }}>{selectedIdea.description}</p>
-                      
+
                       <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 6, borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: 16 }}>
                         <div style={{ fontSize: '0.8rem', color: '#94a3b8', lineHeight: 1.5 }}>
                           <span style={{ color: '#c084fc', fontWeight: 600 }}>Celah Penelitian:</span> {selectedIdea.gap}
                         </div>
                       </div>
 
-                      <button 
-                        className="primary-btn" 
+                      <button
+                        className="primary-btn"
                         style={{ marginTop: 24, background: 'var(--purple-gradient)', border: 'none', padding: '10px 18px' }}
                         onClick={() => {
                           setProposalData(prev => ({ ...prev, title: selectedIdea.title }));
@@ -313,12 +313,12 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
                   value={evalTopic}
                   onChange={(e) => setEvalTopic(e.target.value)}
                   placeholder="Contoh: Optimasi Kolom Distilasi Azeotropik dengan Metode Penambahan Entrainer Etilen Glikol..."
-                  style={{ 
-                    flex: 1, 
-                    padding: 12, 
-                    background: 'rgba(0,0,0,0.3)', 
-                    border: '1px solid rgba(255,255,255,0.08)', 
-                    borderRadius: 8, 
+                  style={{
+                    flex: 1,
+                    padding: 12,
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: 8,
                     color: '#fff',
                     outline: 'none',
                     fontSize: '0.82rem'
@@ -357,18 +357,18 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
                 <p className="page-desc" style={{ margin: 0, color: '#94a3b8', fontSize: '0.82rem' }}>
                   Lengkapi komponen dasar proposal dan salin draf lengkapnya.
                 </p>
-                <button 
-                  className="secondary-btn" 
+                <button
+                  className="secondary-btn"
                   onClick={() => {
                     const temp = thesisCore.generateProposalTemplate(proposalData.title || 'Draft Skripsi');
                     setProposalData(prev => ({ ...prev, ...temp }));
-                  }} 
+                  }}
                   style={{ fontSize: '0.7rem', padding: '6px 12px', border: '1px solid rgba(255,255,255,0.1)' }}
                 >
                   Gunakan Template
                 </button>
               </div>
-              
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 <label style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Judul Proposal</label>
                 <input
@@ -410,8 +410,8 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
                 />
               </div>
 
-              <button 
-                className="primary-btn" 
+              <button
+                className="primary-btn"
                 onClick={() => {
                   const md = `# ${proposalData.title}\n\n## Latar Belakang\n${proposalData.background}\n\n## Rumusan Masalah\n${proposalData.problemStatement}\n\n## Metodologi\n${proposalData.methodology}`;
                   navigator.clipboard.writeText(md);
@@ -429,12 +429,12 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
               <p className="page-desc" style={{ color: '#94a3b8', fontSize: '0.82rem' }}>
                 Generate Bab III Metodologi secara otomatis menggunakan data flowsheet dan model termodinamika dari PFD Builder.
               </p>
-              
-              <div 
-                className="glass-panel" 
-                style={{ 
-                  padding: 18, 
-                  borderRadius: 8, 
+
+              <div
+                className="glass-panel"
+                style={{
+                  padding: 18,
+                  borderRadius: 8,
                   background: 'rgba(255,255,255,0.01)',
                   border: '1px solid rgba(255,255,255,0.04)',
                   fontSize: '0.82rem',
@@ -448,14 +448,14 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
               </div>
 
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                <select 
-                  value={methodologyLang} 
+                <select
+                  value={methodologyLang}
                   onChange={(e) => setMethodologyLang(e.target.value)}
-                  style={{ 
-                    padding: 10, 
-                    background: 'rgba(0,0,0,0.3)', 
-                    border: '1px solid rgba(255,255,255,0.08)', 
-                    borderRadius: 8, 
+                  style={{
+                    padding: 10,
+                    background: 'rgba(0,0,0,0.3)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    borderRadius: 8,
                     color: '#fff',
                     outline: 'none',
                     fontSize: '0.82rem'
@@ -514,7 +514,7 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
               <p className="page-desc" style={{ color: '#94a3b8', fontSize: '0.82rem' }}>
                 Simulasikan sidang pertahanan proposal skripsi Anda di hadapan 3 dewan penguji AI yang kritis.
               </p>
-              
+
               {!defenseActive ? (
                 <div style={{ textAlign: 'center', padding: '40px 10px' }}>
                   <button className="primary-btn" onClick={startDefenseSim} style={{ background: 'var(--purple-gradient)', border: 'none', padding: '12px 24px', fontSize: '0.85rem' }}>
@@ -522,12 +522,12 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
                   </button>
                 </div>
               ) : (
-                <div 
-                  className="glass-panel" 
-                  style={{ 
-                    padding: 18, 
-                    borderRadius: 8, 
-                    background: 'rgba(239, 68, 68, 0.04)', 
+                <div
+                  className="glass-panel"
+                  style={{
+                    padding: 18,
+                    borderRadius: 8,
+                    background: 'rgba(239, 68, 68, 0.04)',
                     borderColor: 'rgba(239, 68, 68, 0.2)',
                     borderWidth: '1px',
                     borderStyle: 'solid'
@@ -548,12 +548,12 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
       </div>
 
       {/* Right AI Chat Sidebar - iOS Dynamic UX Context */}
-      <div 
-        className="card" 
-        style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          overflow: 'hidden', 
+      <div
+        className="card"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
           padding: 20,
           background: 'rgba(10, 7, 24, 0.40)',
           backdropFilter: 'var(--glass-blur)',
@@ -570,24 +570,24 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
 
         {/* Chat Thread Container with .terra-dashboard wrapper to load bubble CSS styles correctly */}
         <div className="terra-dashboard" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-          <div 
-            className="terra-chat-panel-rebuilt scale-md thin-scrollbar" 
-            style={{ 
-              flex: 1, 
-              overflowY: 'auto', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              gap: 14, 
-              paddingRight: 4, 
-              marginBottom: 16 
+          <div
+            className="terra-chat-panel-rebuilt scale-md thin-scrollbar"
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 14,
+              paddingRight: 4,
+              marginBottom: 16
             }}
           >
             {chatMessages.map((msg, index) => {
               const isUser = msg.role === 'user';
               return (
-                <div 
-                  key={index} 
-                  className={`bubble-row ${isUser ? 'user thesis' : 'assistant'}`} 
+                <div
+                  key={index}
+                  className={`bubble-row ${isUser ? 'user thesis' : 'assistant'}`}
                   style={{ display: 'flex', gap: 8, alignItems: 'flex-end', justifyContent: isUser ? 'flex-end' : 'flex-start' }}
                 >
                   {!isUser && (
@@ -619,30 +619,30 @@ Dewan penguji silakan ajukan pertanyaan pertama.`);
             onKeyDown={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
             placeholder={isProcessing ? 'Memikirkan jawaban...' : 'Tanya pembimbing...'}
             disabled={isProcessing}
-            style={{ 
-              flex: 1, 
-              padding: '10px 14px', 
-              background: 'rgba(0,0,0,0.3)', 
-              border: '1px solid rgba(255,255,255,0.08)', 
-              borderRadius: 20, 
-              color: '#fff', 
+            style={{
+              flex: 1,
+              padding: '10px 14px',
+              background: 'rgba(0,0,0,0.3)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: 20,
+              color: '#fff',
               fontSize: '0.78rem',
               outline: 'none',
               transition: 'border 0.2s'
             }}
           />
-          <button 
-            className="primary-btn" 
+          <button
+            className="primary-btn"
             onClick={() => handleSendMessage()}
             disabled={isProcessing}
-            style={{ 
-              width: 36, 
-              height: 36, 
-              borderRadius: '50%', 
-              background: 'var(--purple-gradient)', 
-              border: 'none', 
-              display: 'flex', 
-              alignItems: 'center', 
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              background: 'var(--purple-gradient)',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
               flexShrink: 0,
