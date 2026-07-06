@@ -18,7 +18,8 @@ import {
   BarChart2, 
   FileText, 
   UserCheck, 
-  Edit3 
+  Edit3,
+  KeyRound
 } from 'lucide-react';
 
 const NavigationPanel = ({ 
@@ -42,7 +43,8 @@ const NavigationPanel = ({
   onDeleteChat,
   onRenameChat,
   onExportData,
-  onImportData
+  onImportData,
+  onOpenApiKeyModal
 }) => {
   const generalModes = [
     { id: 'STUDY', icon: <BookOpen size={14} />, label: 'Study Mode', desc: 'Active recall & tutoring' },
@@ -63,7 +65,7 @@ const NavigationPanel = ({
     { id: 'THESIS_DEFENSE', icon: <GraduationCap size={14} />, label: 'Defense Mode', desc: 'Simulate defense panel' }
   ];
 
-  const activeModesList = activeCore === 'GENERAL' ? generalModes : thesisModes;
+    const activeModesList = activeCore === 'THESIS' ? thesisModes : generalModes;
 
   return (
     <div className="terra-nav-panel-rebuilt" style={{ display: "flex", flexDirection: "column", height: "100%", overflow: "hidden", gap: "16px" }}>
@@ -79,20 +81,51 @@ const NavigationPanel = ({
         <p className="brand-sub">Neural Intelligence OS</p>
       </div>
 
+      <div style={{ padding: '0 8px 16px', display: 'flex', justifyContent: 'center' }}>
+        <button 
+          onClick={onOpenApiKeyModal}
+          style={{
+            background: 'rgba(168, 85, 247, 0.1)',
+            border: '1px solid rgba(168, 85, 247, 0.3)',
+            color: '#c084fc',
+            borderRadius: '6px',
+            padding: '6px 12px',
+            fontSize: '0.7rem',
+            cursor: 'pointer',
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            transition: 'all 0.2s ease',
+            width: '100%',
+            justifyContent: 'center'
+          }}
+          onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(168, 85, 247, 0.2)'; }}
+          onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(168, 85, 247, 0.1)'; }}
+        >
+          <KeyRound size={12} /> Set API Key
+        </button>
+      </div>
+
       {/* Core Selector Segments */}
-      <div className="nav-core-switcher">
-        <button 
-          className={`switcher-btn ${activeCore === 'GENERAL' ? 'active general' : ''}`}
-          onClick={() => onSwitchCore('GENERAL')}
+            {/* Intelligence Discipline Switcher */}
+      <div className="nav-core-switcher" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '1px' }}>Intelligence Discipline</span>
+        <select 
+          className="glass-dropdown"
+          value={activeCore}
+          onChange={(e) => onSwitchCore(e.target.value)}
+          style={{ width: '100%', padding: '8px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', borderRadius: '6px', outline: 'none' }}
         >
-          General Intel
-        </button>
-        <button 
-          className={`switcher-btn ${activeCore === 'THESIS' ? 'active thesis' : ''}`}
-          onClick={() => onSwitchCore('THESIS')}
-        >
-          Thesis Advisor
-        </button>
+          <option value="GENERAL">General Engineering</option>
+          <option value="CHEMICAL">Chemical Engineering</option>
+          <option value="MECHANICAL">Mechanical Engineering</option>
+          <option value="CIVIL">Civil Engineering</option>
+          <option value="ELECTRICAL">Electrical Engineering</option>
+          <option value="INDUSTRIAL">Industrial Engineering</option>
+          <option value="THESIS">Thesis Advisor</option>
+          <option value="DESIGN_REVIEW">Design Review Expert</option>
+        </select>
       </div>
 
       {/* AI Projects & Workflows Section */}

@@ -99,7 +99,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
 
   fetchProjects: async () => {
     try {
-      const token = localStorage.getItem('chempilot_auth_token') || ''
+      const token = localStorage.getItem('engineeros_auth_token') || ''
       const res = await fetch(`${BACKEND_URL}/projects/?token=${encodeURIComponent(token)}`)
       if (res.ok) {
         const data = await res.json()
@@ -116,7 +116,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
   loadProject: async (id) => {
     set({ loading: true, error: null })
     try {
-      const token = localStorage.getItem('chempilot_auth_token') || ''
+      const token = localStorage.getItem('engineeros_auth_token') || ''
       const res = await fetch(`${BACKEND_URL}/projects/${id}?token=${encodeURIComponent(token)}`)
       if (res.ok) {
         const data = await res.json()
@@ -130,7 +130,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
           parsed = { nodes: [], streams: [], equipParams: {} }
           
           if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('chempilot_notification', {
+            window.dispatchEvent(new CustomEvent('engineeros_notification', {
               detail: { type: 'error', message: 'Struktur flowsheet corrupt. Dimuat dengan template kosong.' }
             }))
           }
@@ -155,7 +155,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
       console.error('Error loading project:', e)
       set({ loading: false, error: e.message || 'Gagal memuat proyek.' })
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('chempilot_notification', {
+        window.dispatchEvent(new CustomEvent('engineeros_notification', {
           detail: { type: 'error', message: `Gagal memuat proyek: ${e.message || 'Masalah jaringan.'}` }
         }))
       }
@@ -172,7 +172,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
         selectedPreset: 'Benzene-Toluene',
         thermoModel: 'Ideal'
       })
-      const token = localStorage.getItem('chempilot_auth_token') || ''
+      const token = localStorage.getItem('engineeros_auth_token') || ''
       const res = await fetch(`${BACKEND_URL}/projects/?token=${encodeURIComponent(token)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -191,7 +191,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     } catch (e: any) {
       console.error('Error creating project:', e)
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('chempilot_notification', {
+        window.dispatchEvent(new CustomEvent('engineeros_notification', {
           detail: { type: 'error', message: `Gagal membuat proyek: ${e.message}` }
         }))
       }
@@ -210,7 +210,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
         selectedPreset,
         thermoModel
       })
-      const token = localStorage.getItem('chempilot_auth_token') || ''
+      const token = localStorage.getItem('engineeros_auth_token') || ''
       const res = await fetch(`${BACKEND_URL}/projects/?token=${encodeURIComponent(token)}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -241,7 +241,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
 
   deleteProject: async (id) => {
     try {
-      const token = localStorage.getItem('chempilot_auth_token') || ''
+      const token = localStorage.getItem('engineeros_auth_token') || ''
       const res = await fetch(`${BACKEND_URL}/projects/${id}?token=${encodeURIComponent(token)}`, { 
         method: 'DELETE' 
       })
@@ -264,7 +264,7 @@ export const useProjectStore = create<ProjectStore>((set, get) => ({
     } catch (e: any) {
       console.error('Error deleting project:', e)
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('chempilot_notification', {
+        window.dispatchEvent(new CustomEvent('engineeros_notification', {
           detail: { type: 'error', message: `Gagal menghapus proyek: ${e.message}` }
         }))
       }

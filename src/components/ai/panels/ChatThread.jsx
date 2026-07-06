@@ -85,7 +85,7 @@ const ChatThread = ({
     if (setChatScale) {
       setChatScale(nextScale);
     }
-    localStorage.setItem('chempilot_chat_scale', nextScale);
+    localStorage.setItem('engineeros_chat_scale', nextScale);
   };
 
   // Automatically scroll messages

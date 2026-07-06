@@ -83,8 +83,8 @@ function CSTR() {
   const exportToPFD = () => {
     if (!result) return
     try {
-      const activeProj = localStorage.getItem('chempilot_current_project') || 'proj-default-1'
-      const saved = localStorage.getItem('chempilot_pfd_' + activeProj)
+      const activeProj = localStorage.getItem('engineeros_current_project') || 'proj-default-1'
+      const saved = localStorage.getItem('engineeros_pfd_' + activeProj)
       let data = { nodes: [], streams: [], equipParams: {}, NC: 1, SC: 100 }
       if (saved) {
         try {
@@ -109,8 +109,8 @@ function CSTR() {
         conversion: vals.X
       }
 
-      localStorage.setItem('chempilot_pfd_' + activeProj, JSON.stringify(data))
-      window.dispatchEvent(new Event('chempilot_force_pfd_reload'))
+      localStorage.setItem('engineeros_pfd_' + activeProj, JSON.stringify(data))
+      window.dispatchEvent(new Event('engineeros_force_pfd_reload'))
       alert('CSTR Reactor successfully compiled and exported to PFD Flowsheet canvas!')
     } catch (e) {
       console.error(e)

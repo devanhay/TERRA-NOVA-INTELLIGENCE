@@ -529,7 +529,7 @@ function Field({ label, unit, value, onChange, placeholder }) {
 
 export default function DistillationDesign({ projectId, updateAppContext }) {
   const [inputs, setInputs] = useState(() => {
-    const saved = localStorage.getItem('chempilot_distill_' + projectId)
+    const saved = localStorage.getItem('engineeros_distill_' + projectId)
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
@@ -550,7 +550,7 @@ export default function DistillationDesign({ projectId, updateAppContext }) {
   })
   
   const [results, setResults] = useState(() => {
-    const saved = localStorage.getItem('chempilot_distill_' + projectId)
+    const saved = localStorage.getItem('engineeros_distill_' + projectId)
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
@@ -589,7 +589,7 @@ export default function DistillationDesign({ projectId, updateAppContext }) {
   // Save changes to localStorage and update global appContext whenever inputs or results update
   useEffect(() => {
     const data = { inputs, results }
-    localStorage.setItem('chempilot_distill_' + projectId, JSON.stringify(data))
+    localStorage.setItem('engineeros_distill_' + projectId, JSON.stringify(data))
 
     if (updateAppContext) {
       updateAppContext('distill', {

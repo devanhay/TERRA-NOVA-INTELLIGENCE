@@ -17,7 +17,7 @@ const ThesisWorkspace = ({ onSendMessage, messages, isProcessing, activeSubMode,
 
   // Proposal Builder States (with project persistence)
   const [proposalData, setProposalData] = useState(() => {
-    const saved = localStorage.getItem(`chempilot_thesis_proposal_${activeProjectId}`);
+    const saved = localStorage.getItem(`engineeros_thesis_proposal_${activeProjectId}`);
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
@@ -39,7 +39,7 @@ const ThesisWorkspace = ({ onSendMessage, messages, isProcessing, activeSubMode,
 
   // Supervisor Progress Checklist States (with project persistence)
   const [checklist, setChecklist] = useState(() => {
-    const saved = localStorage.getItem(`chempilot_thesis_checklist_${activeProjectId}`);
+    const saved = localStorage.getItem(`engineeros_thesis_checklist_${activeProjectId}`);
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
@@ -55,7 +55,7 @@ const ThesisWorkspace = ({ onSendMessage, messages, isProcessing, activeSubMode,
 
   // Reload states when project switches
   React.useEffect(() => {
-    const savedProposal = localStorage.getItem(`chempilot_thesis_proposal_${activeProjectId}`);
+    const savedProposal = localStorage.getItem(`engineeros_thesis_proposal_${activeProjectId}`);
     if (savedProposal) {
       try { setProposalData(JSON.parse(savedProposal)); } catch (e) {}
     } else {
@@ -68,7 +68,7 @@ const ThesisWorkspace = ({ onSendMessage, messages, isProcessing, activeSubMode,
       });
     }
 
-    const savedChecklist = localStorage.getItem(`chempilot_thesis_checklist_${activeProjectId}`);
+    const savedChecklist = localStorage.getItem(`engineeros_thesis_checklist_${activeProjectId}`);
     if (savedChecklist) {
       try { setChecklist(JSON.parse(savedChecklist)); } catch (e) {}
     } else {
@@ -91,12 +91,12 @@ const ThesisWorkspace = ({ onSendMessage, messages, isProcessing, activeSubMode,
 
   // Autosave proposalData
   React.useEffect(() => {
-    localStorage.setItem(`chempilot_thesis_proposal_${activeProjectId}`, JSON.stringify(proposalData));
+    localStorage.setItem(`engineeros_thesis_proposal_${activeProjectId}`, JSON.stringify(proposalData));
   }, [proposalData, activeProjectId]);
 
   // Autosave checklist
   React.useEffect(() => {
-    localStorage.setItem(`chempilot_thesis_checklist_${activeProjectId}`, JSON.stringify(checklist));
+    localStorage.setItem(`engineeros_thesis_checklist_${activeProjectId}`, JSON.stringify(checklist));
   }, [checklist, activeProjectId]);
 
   const toggleChecklistItem = (item) => {
@@ -105,7 +105,7 @@ const ThesisWorkspace = ({ onSendMessage, messages, isProcessing, activeSubMode,
         ...prev,
         [item]: !prev[item]
       };
-      localStorage.setItem(`chempilot_thesis_checklist_${activeProjectId}`, JSON.stringify(updated));
+      localStorage.setItem(`engineeros_thesis_checklist_${activeProjectId}`, JSON.stringify(updated));
       return updated;
     });
   };

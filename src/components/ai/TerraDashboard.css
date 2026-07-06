@@ -1129,6 +1129,17 @@
   display: flex;
   background: rgba(3, 5, 8, 0.4);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+
+.thesis-subtabs::-webkit-scrollbar {
+  height: 4px;
+}
+
+.thesis-subtabs::-webkit-scrollbar-thumb {
+  background: rgba(168, 85, 247, 0.4);
+  border-radius: 4px;
 }
 
 .subtab-btn {
@@ -1140,6 +1151,7 @@
   color: #64748b;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .subtab-btn:hover {
@@ -1467,6 +1479,23 @@
   background: rgba(168, 85, 247, 0.1) !important;
   border: 1px solid rgba(168, 85, 247, 0.2) !important;
   color: #a855f7 !important;
+}
+
+/* Thesis Workspace Desktop Wrappers */
+.thesis-workspace-panel-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  min-width: 300px;
+}
+
+.thesis-chat-panel-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Focus Chat Mode Wrappers */

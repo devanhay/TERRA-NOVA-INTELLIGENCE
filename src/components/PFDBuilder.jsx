@@ -22,6 +22,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect, useMemo } from 'react'
+import { Library, Workflow, Settings2 } from 'lucide-react'
 
 import {
   CHEMICALS, PRESETS, vleFlash, bubblePointT, dewPointT, relVol,
@@ -1489,7 +1490,7 @@ let NC = 1, SC = 100
 export default function PFDBuilder({ projectId, updateAppContext, setActive }) {
   // Load initial states from localStorage based on projectId
   const savedData = (() => {
-    const saved = localStorage.getItem('chempilot_pfd_' + projectId)
+    const saved = localStorage.getItem('engineeros_pfd_' + projectId)
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
@@ -1507,6 +1508,9 @@ export default function PFDBuilder({ projectId, updateAppContext, setActive }) {
   const [simLog, setSimLog]             = useState(savedData.simLog || [])
   const [convergenceHistory, setConvergenceHistory] = useState([])
   const [hoveredElement, setHoveredElement] = useState(null)
+  
+  // Mobile responsive view state
+  const [mobileView, setMobileView] = useState('canvas') // 'palette' | 'canvas' | 'inspector'
 
   const [dynamicTime, setDynamicTime] = useState(0)
   const [isDynamicRunning, setIsDynamicRunning] = useState(false)
@@ -1738,7 +1742,7 @@ export default function PFDBuilder({ projectId, updateAppContext, setActive }) {
   // Reload flowsheet when triggered by external AI event
   useEffect(() => {
     const handleReload = () => {
-      const saved = localStorage.getItem('chempilot_pfd_' + projectId)
+      const saved = localStorage.getItem('engineeros_pfd_' + projectId)
       if (saved) {
         try {
           const parsed = JSON.parse(saved)
@@ -1753,8 +1757,8 @@ export default function PFDBuilder({ projectId, updateAppContext, setActive }) {
         } catch (e) {}
       }
     }
-    window.addEventListener('chempilot_force_pfd_reload', handleReload)
-    return () => window.removeEventListener('chempilot_force_pfd_reload', handleReload)
+    window.addEventListener('engineeros_force_pfd_reload', handleReload)
+    return () => window.removeEventListener('engineeros_force_pfd_reload', handleReload)
   }, [projectId])
 
   // Save changes to localStorage and update global appContext whenever state updates
@@ -1771,7 +1775,7 @@ export default function PFDBuilder({ projectId, updateAppContext, setActive }) {
         NC,
         SC
       }
-      localStorage.setItem('chempilot_pfd_' + projectId, JSON.stringify(pfdData))
+      localStorage.setItem('engineeros_pfd_' + projectId, JSON.stringify(pfdData))
     }, 400)
 
     if (updateAppContext) {
@@ -1825,10 +1829,17 @@ export default function PFDBuilder({ projectId, updateAppContext, setActive }) {
   }, [])
 
   const handleCanvasMouseDown = useCallback(e => {
-    if (e.button === 1 || (e.button === 0 && e.altKey)) {
+    // Allow panning with middle click (1) or left click (0) on canvas background
+    if (e.button === 1 || e.button === 0) {
       isPanning.current = true
       panStart.current = { x: e.clientX - transform.x, y: e.clientY - transform.y }
-      e.preventDefault()
+    }
+  }, [transform])
+
+  const handleCanvasTouchStart = useCallback(e => {
+    if (e.touches.length === 1) {
+      isPanning.current = true
+      panStart.current = { x: e.touches[0].clientX - transform.x, y: e.touches[0].clientY - transform.y }
     }
   }, [transform])
 
@@ -1838,7 +1849,14 @@ export default function PFDBuilder({ projectId, updateAppContext, setActive }) {
     }
   }, [])
 
+  const handleCanvasTouchMove = useCallback(e => {
+    if (isPanning.current && e.touches.length === 1) {
+      setTransform(t => ({ ...t, x: e.touches[0].clientX - panStart.current.x, y: e.touches[0].clientY - panStart.current.y }))
+    }
+  }, [])
+
   const handleCanvasMouseUp = useCallback(() => { isPanning.current = false }, [])
+  const handleCanvasTouchEnd = useCallback(() => { isPanning.current = false }, [])
 
   useEffect(() => {
     const el = canvasRef.current
@@ -1883,6 +1901,14 @@ export default function PFDBuilder({ projectId, updateAppContext, setActive }) {
     }
   }
 
+  const handleSelectStream = (id) => {
+    setSelStream(id)
+    setSelNode(null)
+    // Auto-switch to inspector on mobile when a stream is selected
+    if (window.innerWidth <= 900) {
+      setMobileView('inspector')
+    }
+  }
 
 
   // ── Load template
@@ -3248,10 +3274,23 @@ Do not output any markdown formatting, backticks, or explanation outside the JSO
       )}
 
       {/* ── MAIN 3-COLUMN LAYOUT ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '192px 1fr 282px', gap: 12, alignItems: 'start' }}>
+      <div className="pfd-main-layout">
+
+        {/* Mobile View Toggle Bar */}
+        <div className="pfd-mobile-nav">
+          <button className={`pfd-mobile-tab ${mobileView === 'palette' ? 'active' : ''}`} onClick={() => setMobileView('palette')}>
+            <Library size={14} /> Library
+          </button>
+          <button className={`pfd-mobile-tab ${mobileView === 'canvas' ? 'active' : ''}`} onClick={() => setMobileView('canvas')}>
+            <Workflow size={14} /> Canvas
+          </button>
+          <button className={`pfd-mobile-tab ${mobileView === 'inspector' ? 'active' : ''}`} onClick={() => setMobileView('inspector')}>
+            <Settings2 size={14} /> Inspector
+          </button>
+        </div>
 
         {/* EQUIPMENT PALETTE */}
-        <div style={{ padding: 12, background: 'rgba(13,20,35,0.96)', backdropFilter: 'blur(12px)', borderRadius: 14, border: '1px solid #1E293B' }}>
+        <div className={`pfd-panel pfd-palette ${mobileView === 'palette' ? 'mobile-visible' : ''}`}>
           <div style={{ fontSize: '0.54rem', color: '#475569', textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: 8 }}>Equipment Library</div>
 
           {/* Category filter */}
@@ -3298,10 +3337,14 @@ Do not output any markdown formatting, backticks, or explanation outside the JSO
 
         {/* FLOWSHEET CANVAS */}
         <div
+          className={`pfd-panel pfd-canvas-container ${mobileView === 'canvas' ? 'mobile-visible' : ''}`}
           ref={canvasRef}
           onMouseDown={handleCanvasMouseDown}
           onMouseMove={handleCanvasMouseMove}
           onMouseUp={handleCanvasMouseUp}
+          onTouchStart={handleCanvasTouchStart}
+          onTouchMove={handleCanvasTouchMove}
+          onTouchEnd={handleCanvasTouchEnd}
           onClick={() => { setSelNode(null); setSelStream(null); setConnectFrom(null) }}
           style={{
             position: 'relative', height: 600,
@@ -3373,7 +3416,10 @@ Do not output any markdown formatting, backticks, or explanation outside the JSO
             {/* Equipment nodes */}
             {nodes.map(n => (
               <EquipNode key={n.id} node={n} selected={selNode === n.id} transform={transform}
-                onSelect={id => { setSelNode(id); setSelStream(null) }}
+                onSelect={id => { 
+                  setSelNode(id); setSelStream(null);
+                  if (window.innerWidth <= 900) setMobileView('inspector');
+                }}
                 onDrag={drag} onStartConnect={startConnect} onEndConnect={endConnect}
                 connecting={!!connectFrom} status={getNodeStatus(n, equipParams)}
                 onMouseEnter={(e, nx, ny) => setHoveredElement({ type: 'node', id: n.id, x: nx + 50, y: ny - 20, node: n })}

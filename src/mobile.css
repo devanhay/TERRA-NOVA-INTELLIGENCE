@@ -1,4 +1,4 @@
-/* CHEMPILOT - MOBILE ENVIRONMENT v2.0
+/* EngineerOS - MOBILE ENVIRONMENT v2.0
    Complete mobile UX overhaul: bottom nav, clean layout,
    component-specific responsive fixes, safe-area support
    Target: <=900px (small tablets/phones)
@@ -15,6 +15,12 @@
   }
 
   /* Sidebar is now controlled by transform in App.css */
+
+  /* Fix BootScreen width on mobile */
+  .boot-glass-card {
+    width: 90% !important;
+    padding: 30px 20px !important;
+  }
 
   .os-main {
     margin-left: 0 !important;
@@ -47,16 +53,39 @@
   /* Re-show auth pill */
   .os-topbar .topbar-auth-pill .hud-toggle-pill {
     display: inline-flex !important;
-    padding: 4px 10px !important;
-    font-size: 0.55rem !important;
+    padding: 4px 8px !important;
+    font-size: 0.65rem !important;
   }
 
-  .mobile-menu-toggle { display: inline-flex !important; }
+  .os-topbar .topbar-auth-pill .auth-pill-text {
+    display: inline !important;
+    font-size: 0.65rem !important;
+  }
+
+  .mobile-menu-toggle { 
+    display: inline-flex !important; 
+    flex-shrink: 0 !important;
+  }
 
   .topbar-left {
     font-size: 0.68rem !important;
     gap: 6px !important;
     color: #94A3B8 !important;
+    overflow: hidden !important;
+  }
+
+  .topbar-page-title {
+    display: inline-block !important;
+    max-width: 140px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    vertical-align: middle !important;
+  }
+
+  .topbar-brand-text,
+  .topbar-sep-text {
+    display: none !important;
   }
 
   .os-content {
@@ -552,7 +581,15 @@
   }
 
   .terra-nav-panel-rebuilt {
-    display: none !important;
+    position: absolute !important;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100 !important;
+    background: rgba(8, 10, 15, 0.98) !important;
+    backdrop-filter: blur(24px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.5) !important;
   }
 
   .terra-insights-panel {
@@ -562,9 +599,10 @@
   .thesis-workspace-container {
     width: 100% !important;
     border-right: none !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
-    height: auto !important;
-    max-height: 50vh !important;
+    border-bottom: none !important;
+    height: 100% !important;
+    max-height: none !important;
+    flex: 1 !important;
   }
 
   .thesis-subtabs {
@@ -897,5 +935,65 @@
   .pfd-canvas-area {
     height: 260px !important;
     min-height: 200px !important;
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   14. PFD BUILDER MOBILE ENVIRONMENT
+   ═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .pfd-main-layout {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+    height: calc(100vh - 170px);
+    overflow: hidden;
+    position: relative;
+  }
+  .pfd-mobile-nav {
+    display: flex !important;
+    background: rgba(10,15,30,0.95);
+    border-radius: var(--r-md);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+  .pfd-mobile-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 0;
+    border-radius: var(--r-sm);
+    border: none;
+    background: transparent;
+    color: #64748B;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .pfd-mobile-tab.active {
+    background: rgba(0, 255, 163, 0.1);
+    color: var(--accent);
+  }
+  .pfd-panel {
+    display: none !important;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+  }
+  .pfd-panel.mobile-visible {
+    display: flex !important;
+    flex-direction: column;
+  }
+  .pfd-canvas-container {
+    height: 100% !important;
+    min-height: 400px;
+    border-radius: var(--r-md) !important;
   }
 }

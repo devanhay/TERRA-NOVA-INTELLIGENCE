@@ -32,11 +32,12 @@ export class IntentEngine {
     const input = userInput.toLowerCase();
     
     // Explicit override from user interface selection
-    if (forceMode) {
-      const isThesis = forceMode.startsWith('THESIS_') || forceMode === 'SUPERVISOR';
+    if (forceCore || forceMode) {
+      const isThesisMode = forceMode ? (forceMode.startsWith('THESIS_') || forceMode === 'SUPERVISOR') : false;
+      const finalCore = forceCore || (isThesisMode ? 'THESIS' : 'GENERAL');
       return {
-        core: isThesis ? 'THESIS' : 'GENERAL',
-        mode: forceMode,
+        core: finalCore,
+        mode: forceMode || 'STUDY',
         confidence: 1.0,
         originalText: userInput
       };

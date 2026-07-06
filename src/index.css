@@ -510,3 +510,33 @@ body.motion-reduced * {
   animation: none !important;
   transition: none !important;
 }
+
+/* ═══════════════════════════════════════════════
+   PFD BUILDER DESKTOP STYLES
+   ═══════════════════════════════════════════════ */
+.pfd-main-layout {
+  display: grid;
+  grid-template-columns: 192px 1fr 282px;
+  gap: 12px;
+  align-items: start;
+}
+.pfd-mobile-nav {
+  display: none;
+}
+.pfd-palette {
+  padding: 12px;
+  background: rgba(13,20,35,0.96);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  border: 1px solid #1E293B;
+}
+.pfd-inspector {
+  padding: 12px;
+  background: rgba(13,20,35,0.96);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  border: 1px solid #1E293B;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

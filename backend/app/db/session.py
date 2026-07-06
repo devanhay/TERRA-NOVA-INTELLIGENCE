@@ -14,6 +14,7 @@ if DATABASE_URL.startswith("postgres://"):
 # SQLite fallback path on Vercel must be writeable (using /tmp folder)
 if DATABASE_URL.startswith("sqlite") and os.getenv("VERCEL"):
     DATABASE_URL = "sqlite:////tmp/chempilot.db"
+    print("WARNING: Using ephemeral SQLite database in Vercel. Accounts and data WILL NOT persist across serverless instances restarts. Please set DATABASE_URL to a persistent PostgreSQL/Supabase database in Vercel settings.")
 
 # For SQLite development fallback, allow check_same_thread for async requests
 if DATABASE_URL.startswith("sqlite"):

@@ -26,7 +26,7 @@ const PRESET_BOOKS = [
 
 export default function BookLibrary() {
   const [books, setBooks] = useState(() => {
-    const saved = localStorage.getItem('chempilot_uploaded_books')
+    const saved = localStorage.getItem('engineeros_uploaded_books')
     return saved ? [...PRESET_BOOKS, ...JSON.parse(saved)] : PRESET_BOOKS
   })
   
@@ -41,7 +41,7 @@ export default function BookLibrary() {
   const [aiExplanation, setAiExplanation] = useState('')
   const [isExplaining, setIsExplaining] = useState(false)
   const [highlights, setHighlights] = useState(() => {
-    const saved = localStorage.getItem('chempilot_book_highlights')
+    const saved = localStorage.getItem('engineeros_book_highlights')
     return saved ? JSON.parse(saved) : []
   })
   const [isFullscreen, setIsFullscreen] = useState(false)
@@ -110,7 +110,7 @@ export default function BookLibrary() {
   }, [])
 
   useEffect(() => {
-    localStorage.setItem('chempilot_book_highlights', JSON.stringify(highlights))
+    localStorage.setItem('engineeros_book_highlights', JSON.stringify(highlights))
   }, [highlights])
 
   // PDF Document Auto-loader (for visual canvas viewing)
@@ -284,7 +284,7 @@ export default function BookLibrary() {
             isUploaded: true,
             pages: b.pages
           }))
-          localStorage.setItem('chempilot_uploaded_books', JSON.stringify(uploadMetadata))
+          localStorage.setItem('engineeros_uploaded_books', JSON.stringify(uploadMetadata))
           return updated
         })
 
@@ -314,7 +314,7 @@ export default function BookLibrary() {
           isUploaded: true,
           pages: b.pages
         }))
-        localStorage.setItem('chempilot_uploaded_books', JSON.stringify(uploadMetadata))
+        localStorage.setItem('engineeros_uploaded_books', JSON.stringify(uploadMetadata))
         return updated
       })
 

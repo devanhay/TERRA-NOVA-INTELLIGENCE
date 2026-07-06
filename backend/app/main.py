@@ -13,8 +13,24 @@ load_dotenv()
 try:
     Base.metadata.create_all(bind=engine)
     print("Database tables initialized successfully.")
+    
+    # Auto-seed default user Devan
+    from app.db.session import SessionLocal
+    from app.models.project import User as UserModel
+    import bcrypt
+    
+    db = SessionLocal()
+    existing = db.query(UserModel).filter(UserModel.username == "devan").first()
+    if not existing:
+        salt = bcrypt.gensalt()
+        hashed = bcrypt.hashpw("@levy123".encode('utf-8'), salt).decode('utf-8')
+        user = UserModel(username="devan", password_hash=hashed)
+        db.add(user)
+        db.commit()
+        print("Default user Devan seeded successfully.")
+    db.close()
 except Exception as e:
-    print(f"Error initializing database: {e}")
+    print(f"Error initializing database or seeding: {e}")
 
 app = FastAPI(
     title="ChemPilot OS Core API",

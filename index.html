@@ -6,23 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Primary Meta -->
-    <title>ChemPilot OS — Terra Nova Intelligence</title>
-    <meta name="description" content="Advanced chemical engineering workspace with PFD Builder, thermodynamic calculators, distillation design, and AI companion. Built for Chemical Engineering students." />
+    <title>EngineerOS — Terra Nova Intelligence</title>
+    <meta name="description" content="Advanced multi-disciplinary engineering operating system. Featuring intelligent PFD Builders, thermodynamic calculators, civil/mechanical modules, and AI companions. Built for all engineers." />
     <meta name="theme-color" content="#020208" />
+
+    <!-- Cache Busting for Mobile Chrome Aggressive Caching -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+    </script>
 
     <!-- Open Graph / Social Sharing -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="ChemPilot OS — Terra Nova Intelligence" />
-    <meta property="og:description" content="Advanced chemical engineering workspace. PFD Builder, thermodynamic calculators, McCabe-Thiele solver, and AI tutor." />
-    <meta property="og:url" content="https://chempilot-phase1.vercel.app" />
-    <meta property="og:image" content="https://chempilot-phase1.vercel.app/og-image.png" />
+    <meta property="og:title" content="EngineerOS — Terra Nova Intelligence" />
+    <meta property="og:description" content="Advanced multi-disciplinary engineering operating system with AI Companions and simulations." />
+    <meta property="og:url" content="https://engineeros.vercel.app" />
+    <meta property="og:image" content="https://engineeros.vercel.app/og-image.png" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ChemPilot OS — Terra Nova Intelligence" />
-    <meta name="twitter:description" content="Advanced chemical engineering workspace with PFD Builder, AI Companion, and thermodynamic solvers." />
+    <meta name="twitter:title" content="EngineerOS — Terra Nova Intelligence" />
+    <meta name="twitter:description" content="Advanced multi-disciplinary engineering operating system with AI Companions and simulations." />
 
     <!-- PDF.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf_viewer.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script>
       if (window.pdfjsLib) {

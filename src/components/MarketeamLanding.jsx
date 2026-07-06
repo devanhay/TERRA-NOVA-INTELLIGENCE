@@ -187,7 +187,7 @@ export default function MarketeamLanding({ onEnterOS }) {
                 marginLeft: 12
               }}
             >
-              🚀 Launch ChemPilot OS
+              🚀 Launch EngineerOS
             </button>
           )}
         </div>

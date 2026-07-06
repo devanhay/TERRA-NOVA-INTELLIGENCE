@@ -1448,7 +1448,7 @@ const CAT_COLORS = {
 export default function CalculatorHub({ projectId, updateAppContext }) {
   const [activeCat, setActiveCat]   = useState('All')
   const [activeCalc, setActiveCalc] = useState(() => {
-    const saved = localStorage.getItem('chempilot_calc_' + projectId)
+    const saved = localStorage.getItem('engineeros_calc_' + projectId)
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
@@ -1464,7 +1464,7 @@ export default function CalculatorHub({ projectId, updateAppContext }) {
   // Save changes to localStorage and update global appContext whenever active calculator changes
   useEffect(() => {
     const data = { activeCalcId: activeCalc?.id || null }
-    localStorage.setItem('chempilot_calc_' + projectId, JSON.stringify(data))
+    localStorage.setItem('engineeros_calc_' + projectId, JSON.stringify(data))
 
     if (updateAppContext) {
       updateAppContext('calc', {

@@ -72,7 +72,7 @@ export class TerraAIEngine {
     this.currentConfusion = emotionState.confusion;
 
     // 6. WORKSPACE EXTRA CONTEXT INJECTION (PFD, Calc, Distill)
-    pipelineLog.push("Injecting live ChemPilot workspace telemetry...");
+    pipelineLog.push("Injecting live EngineerOS workspace telemetry...");
     const extraContext = {};
     if (workspaceContext.activeTab) {
       extraContext.activeTab = workspaceContext.activeTab;
@@ -97,7 +97,7 @@ export class TerraAIEngine {
     // 7. LANGUAGE ENGINE (System Prompt Generation)
     pipelineLog.push("Executing [LanguageEngine] compiling instructions...");
     const systemPrompt = this.languageCore.constructSystemPrompt({
-      core: routingResult.core,
+      intelligenceMode: routingResult.core,
       mode: routingResult.mode,
       reasoningChain: logicOutput.reasoningChain,
       emotionState: emotionState,
@@ -135,7 +135,7 @@ export class TerraAIEngine {
       return `- Stream ${s.id} (from ${s.from} to ${s.to}): ${flowText}`;
     }).join("\n") || "No streams added yet.";
 
-    const systemPrompt = `You are the TERRA AI Real-Time Co-Pilot inside ChemPilot OS.
+    const systemPrompt = `You are the TERRA AI Real-Time Co-Pilot inside EngineerOS.
 Your task is to analyze the user's active chemical process flowsheet (PFD) and provide a concise, expert diagnostic check or warning.
 
 Active Flowsheet Data:

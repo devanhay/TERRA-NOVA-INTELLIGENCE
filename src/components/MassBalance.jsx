@@ -298,8 +298,8 @@ function Separator() {
   const exportToPFD = () => {
     if (!res) return
     try {
-      const activeProj = localStorage.getItem('chempilot_current_project') || 'proj-default-1'
-      const saved = localStorage.getItem('chempilot_pfd_' + activeProj)
+      const activeProj = localStorage.getItem('engineeros_current_project') || 'proj-default-1'
+      const saved = localStorage.getItem('engineeros_pfd_' + activeProj)
       let data = { nodes: [], streams: [], equipParams: {}, NC: 1, SC: 100 }
       if (saved) {
         data = JSON.parse(saved)
@@ -312,7 +312,7 @@ function Separator() {
         y: 250,
       }
       data.nodes.push(sepNode)
-      localStorage.setItem('chempilot_pfd_' + activeProj, JSON.stringify(data))
+      localStorage.setItem('engineeros_pfd_' + activeProj, JSON.stringify(data))
       alert('✓ Separator node exported to PFD Builder successfully!')
     } catch(e) {
       console.error(e)

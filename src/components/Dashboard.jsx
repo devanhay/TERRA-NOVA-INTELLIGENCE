@@ -259,7 +259,7 @@ export default function Dashboard({ setActive, projectsList, currentProjectId })
           </div>
           <h1 className="hero-title">
             Engineering Cockpit <br />
-            <span className="gradient-text">for ChemPilot OS</span>
+            <span className="gradient-text">for EngineerOS</span>
           </h1>
           <p className="hero-subtitle">
             Dynamic workspace designed for process thermodynamics, reactor kinetics, and automated plant engineering simulations.

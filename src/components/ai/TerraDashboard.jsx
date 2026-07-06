@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { AlertCircle, WifiOff, KeyRound, ChevronLeft, ChevronRight } from 'lucide-react';
+import { AlertCircle, WifiOff, KeyRound, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import NavigationPanel from './panels/NavigationPanel';
 import ContextPanel from './panels/ContextPanel';
 import ChatThread from './panels/ChatThread';
@@ -27,7 +27,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
   const [chatWidth, setChatWidth] = useState(480);
   const isResizing = useRef(false);
   const [chatScale, setChatScale] = useState(() => {
-    return localStorage.getItem('chempilot_chat_scale') || 'md';
+    return localStorage.getItem('engineeros_chat_scale') || 'md';
   });
 
   // Telemetry drawer collapsible visibility state (default true on large monitors)
@@ -36,7 +36,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
   // Projects state containing multiple chat workflows
   const [projects, setProjects] = useState(() => {
     try {
-      const raw = localStorage.getItem('chempilot_terra_projects');
+      const raw = localStorage.getItem('engineeros_terra_projects');
       if (raw) {
         const parsed = JSON.parse(raw);
         if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].chats && parsed[0].chats.length > 0) {
@@ -69,16 +69,16 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
         ]
       }
     ];
-    localStorage.setItem('chempilot_terra_projects', JSON.stringify(seed));
+    localStorage.setItem('engineeros_terra_projects', JSON.stringify(seed));
     return seed;
   });
 
   const [activeProjectId, setActiveProjectId] = useState(() => {
-    return localStorage.getItem('chempilot_terra_active_project') || 'proj-default-1';
+    return localStorage.getItem('engineeros_terra_active_project') || 'proj-default-1';
   });
 
   const [activeChatId, setActiveChatId] = useState(() => {
-    return localStorage.getItem('chempilot_terra_active_chat') || 'chat-default-1';
+    return localStorage.getItem('engineeros_terra_active_chat') || 'chat-default-1';
   });
 
   // Derived active project and chat
@@ -100,11 +100,16 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
     }
   }, [activeChatId, activeProjectId, projects]);
 
+  const isInitialLoad = useRef(true);
+
   // Sync AI Workspace (chat projects and histories) from cloud database on mount
   useEffect(() => {
     const syncCloudWorkspace = async () => {
-      const token = localStorage.getItem('chempilot_auth_token') || '';
-      if (!token) return;
+      const token = localStorage.getItem('engineeros_auth_token') || '';
+      if (!token) {
+        isInitialLoad.current = false;
+        return;
+      }
       const host = import.meta.env.VITE_API_URL || '';
       try {
         const res = await fetch(`${host}/api/auth/me/ai-projects?token=${encodeURIComponent(token)}`);
@@ -114,15 +119,15 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
             const parsed = JSON.parse(data.ai_projects_json);
             if (Array.isArray(parsed) && parsed.length > 0) {
               setProjects(parsed);
-              localStorage.setItem('chempilot_terra_projects', data.ai_projects_json);
+              localStorage.setItem('engineeros_terra_projects', data.ai_projects_json);
               
               // Unpack and write individual thesis states back to localStorage
               parsed.forEach(p => {
                 if (p.thesis_proposal) {
-                  localStorage.setItem(`chempilot_thesis_proposal_${p.id}`, JSON.stringify(p.thesis_proposal));
+                  localStorage.setItem(`engineeros_thesis_proposal_${p.id}`, JSON.stringify(p.thesis_proposal));
                 }
                 if (p.thesis_checklist) {
-                  localStorage.setItem(`chempilot_thesis_checklist_${p.id}`, JSON.stringify(p.thesis_checklist));
+                  localStorage.setItem(`engineeros_thesis_checklist_${p.id}`, JSON.stringify(p.thesis_checklist));
                 }
               });
             }
@@ -130,6 +135,8 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
         }
       } catch (err) {
         console.warn("Failed to sync cloud AI workspace:", err);
+      } finally {
+        isInitialLoad.current = false;
       }
     };
     syncCloudWorkspace();
@@ -137,6 +144,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
 
   // Debounced auto-save of AI Workspace to cloud database
   useEffect(() => {
+    if (isInitialLoad.current) return;
     if (!projects || projects.length === 0) return;
     
     // Enrich projects metadata with thesis workspace draft and checklist data
@@ -144,9 +152,9 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
       let thesis_proposal = null;
       let thesis_checklist = null;
       try {
-        const rawProp = localStorage.getItem(`chempilot_thesis_proposal_${p.id}`);
+        const rawProp = localStorage.getItem(`engineeros_thesis_proposal_${p.id}`);
         if (rawProp) thesis_proposal = JSON.parse(rawProp);
-        const rawCheck = localStorage.getItem(`chempilot_thesis_checklist_${p.id}`);
+        const rawCheck = localStorage.getItem(`engineeros_thesis_checklist_${p.id}`);
         if (rawCheck) thesis_checklist = JSON.parse(rawCheck);
       } catch (e) {}
 
@@ -158,9 +166,9 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
     });
 
     // Save to local storage
-    localStorage.setItem('chempilot_terra_projects', JSON.stringify(enrichedProjects));
+    localStorage.setItem('engineeros_terra_projects', JSON.stringify(enrichedProjects));
     
-    const token = localStorage.getItem('chempilot_auth_token') || '';
+    const token = localStorage.getItem('engineeros_auth_token') || '';
     if (!token) return;
     
     const host = import.meta.env.VITE_API_URL || '';
@@ -198,7 +206,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
           }
           return p;
         });
-        localStorage.setItem('chempilot_terra_projects', JSON.stringify(updated));
+        localStorage.setItem('engineeros_terra_projects', JSON.stringify(updated));
         return updated;
       });
       return nextVal;
@@ -207,18 +215,18 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
 
   const handleSelectProject = (projId) => {
     setActiveProjectId(projId);
-    localStorage.setItem('chempilot_terra_active_project', projId);
+    localStorage.setItem('engineeros_terra_active_project', projId);
     const proj = projects.find(p => p.id === projId);
     const firstChatId = proj?.chats?.[0]?.id || '';
     if (firstChatId) {
       setActiveChatId(firstChatId);
-      localStorage.setItem('chempilot_terra_active_chat', firstChatId);
+      localStorage.setItem('engineeros_terra_active_chat', firstChatId);
     }
   };
 
   const handleSelectChat = (chatId) => {
     setActiveChatId(chatId);
-    localStorage.setItem('chempilot_terra_active_chat', chatId);
+    localStorage.setItem('engineeros_terra_active_chat', chatId);
   };
 
   const handleCreateProject = (name) => {
@@ -239,7 +247,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
     };
     const updated = [...projects, newProj];
     setProjects(updated);
-    localStorage.setItem('chempilot_terra_projects', JSON.stringify(updated));
+    localStorage.setItem('engineeros_terra_projects', JSON.stringify(updated));
     handleSelectProject(newProj.id);
   };
 
@@ -263,7 +271,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
       return p;
     });
     setProjects(updated);
-    localStorage.setItem('chempilot_terra_projects', JSON.stringify(updated));
+    localStorage.setItem('engineeros_terra_projects', JSON.stringify(updated));
     handleSelectChat(newChat.id);
   };
 
@@ -276,7 +284,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
     if (!confirm("Hapus project ini beserta seluruh chat di dalamnya?")) return;
     const updated = projects.filter(p => p.id !== projId);
     setProjects(updated);
-    localStorage.setItem('chempilot_terra_projects', JSON.stringify(updated));
+    localStorage.setItem('engineeros_terra_projects', JSON.stringify(updated));
     if (activeProjectId === projId) {
       handleSelectProject(updated[0].id);
     }
@@ -301,7 +309,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
       return p;
     });
     setProjects(updated);
-    localStorage.setItem('chempilot_terra_projects', JSON.stringify(updated));
+    localStorage.setItem('engineeros_terra_projects', JSON.stringify(updated));
     if (activeChatId === chatId) {
       const nextChat = updated.find(p => p.id === projId)?.chats?.[0];
       if (nextChat) {
@@ -328,7 +336,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
       return p;
     });
     setProjects(updated);
-    localStorage.setItem('chempilot_terra_projects', JSON.stringify(updated));
+    localStorage.setItem('engineeros_terra_projects', JSON.stringify(updated));
   };
   const [emotionState, setEmotionState] = useState({ stress: 30, confusion: 20, empathyLevel: 'Normal' });
   const [pipelineLog, setPipelineLog] = useState([]);
@@ -337,7 +345,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
 
   // Student mastery stats (bound to MLEngine context)
   const [masteryData, setMasteryData] = useState(() => {
-    const saved = localStorage.getItem('chempilot_mastery');
+    const saved = localStorage.getItem('engineeros_mastery');
     return saved ? JSON.parse(saved) : { mass_balance: 45, thermodynamics: 60, reaction: 70, plant_design: 50 };
   });
 
@@ -363,7 +371,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
 
   // Save mastery changes
   useEffect(() => {
-    localStorage.setItem('chempilot_mastery', JSON.stringify(masteryData));
+    localStorage.setItem('engineeros_mastery', JSON.stringify(masteryData));
   }, [masteryData]);
 
   // Layout mode propagation callback
@@ -529,7 +537,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
     try {
       const dataStr = JSON.stringify(projects, null, 2);
       const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-      const exportFileDefaultName = `chempilot_terra_backup_${Date.now()}.json`;
+      const exportFileDefaultName = `engineeros_terra_backup_${Date.now()}.json`;
       const linkElement = document.createElement('a');
       linkElement.setAttribute('href', dataUri);
       linkElement.setAttribute('download', exportFileDefaultName);
@@ -552,12 +560,12 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
           const parsed = JSON.parse(event.target.result);
           if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].chats) {
             setProjects(parsed);
-            localStorage.setItem('chempilot_terra_projects', JSON.stringify(parsed));
+            localStorage.setItem('engineeros_terra_projects', JSON.stringify(parsed));
             setActiveProjectId(parsed[0].id);
-            localStorage.setItem('chempilot_terra_active_project', parsed[0].id);
+            localStorage.setItem('engineeros_terra_active_project', parsed[0].id);
             if (parsed[0].chats && parsed[0].chats.length > 0) {
               setActiveChatId(parsed[0].chats[0].id);
-              localStorage.setItem('chempilot_terra_active_chat', parsed[0].chats[0].id);
+              localStorage.setItem('engineeros_terra_active_chat', parsed[0].chats[0].id);
             }
             alert("Data berhasil dipulihkan dari backup!");
           } else {
@@ -589,7 +597,13 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
           backgroundColor: 'rgba(5, 8, 16, 0.9)', backdropFilter: 'blur(15px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
         }}>
-          <div className="card" style={{ padding: '30px', maxWidth: '400px', textAlign: 'center', borderColor: 'var(--terra-general-glow)', background: 'rgba(15, 23, 42, 0.95)' }}>
+          <div className="card" style={{ padding: '30px', maxWidth: '400px', textAlign: 'center', borderColor: 'var(--terra-general-glow)', background: 'rgba(15, 23, 42, 0.95)', position: 'relative' }}>
+            <button 
+              onClick={() => setShowApiPrompt(false)} 
+              style={{ position: 'absolute', top: 12, right: 12, background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer' }}
+            >
+              <X size={16}/>
+            </button>
             <div style={{ fontSize: '2.5rem', marginBottom: '12px' }}>🧠</div>
             <h3 style={{ fontFamily: 'var(--font-mono)', marginBottom: '15px', color: '#fff' }}>TERRA Neural Core</h3>
             <p style={{ color: '#94a3b8', fontSize: '0.82rem', marginBottom: '20px', lineHeight: 1.6 }}>
@@ -641,6 +655,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
           onRenameChat={handleRenameChat}
           onExportData={handleExportData}
           onImportData={handleImportData}
+          onOpenApiKeyModal={() => setShowApiPrompt(true)}
         />
       )}
 
@@ -659,7 +674,7 @@ const TerraDashboard = ({ projectId, appContext, isDrawerMode = false, onCloseDr
       <div className="terra-dashboard-body">
         
         {/* Core 1: General Intelligence Workspace */}
-        {activeCore === 'GENERAL' && (
+        {activeCore !== 'THESIS' && (
           <>
             {/* Center Panel: Chat thread takes main focal area */}
             <ChatThread 

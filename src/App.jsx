@@ -4,7 +4,8 @@ import {
   FlaskConical, ArrowLeftRight, Scale, Zap, Thermometer,
   Atom, BrainCircuit, ChevronLeft, Menu, Folder, FolderPlus,
   CheckCircle2, AlertTriangle, X, FilePlus,
-  Globe, Monitor, Wind
+  Globe, Monitor, Wind,
+  PlaySquare, Telescope, Gamepad2, GraduationCap, Wrench, Building2, Cpu, Factory
 } from 'lucide-react'
 import './App.css'
 import UnitConverter from './components/UnitConverter'
@@ -21,49 +22,65 @@ import TerraDashboard from './components/ai/TerraDashboard'
 import Dashboard from './components/Dashboard'
 import BookLibrary from './components/BookLibrary'
 import AuthModal from './components/AuthModal'
+import ThesisStudio from './components/ThesisStudio'
+import AIResearcher from './components/AIResearcher'
 
 // ── BOOT SEQUENCE ──────────────────────────────
 const BOOT_LINES = [
-  { text: 'initializing terra-nova-os...', delay: 0,    status: 'ok' },
-  { text: 'loading Peng-Robinson EOS engine', delay: 250, status: 'ok' },
-  { text: 'compiling McCabe-Thiele stage stepping', delay: 500, status: 'ok' },
-  { text: 'mounting parametric sensitivity solver', delay: 750, status: 'ok' },
-  { text: 'connecting jarvis companion engine', delay: 1000, status: 'ok' },
+  { text: 'initializing engineeros-kernel...', delay: 0,    status: 'ok' },
+  { text: 'loading multi-disciplinary physics engines', delay: 250, status: 'ok' },
+  { text: 'mounting terra ai neural cortex', delay: 500, status: 'ok' },
+  { text: 'syncing workspace telemetry', delay: 750, status: 'ok' },
+  { text: 'establishing secure local connection', delay: 1000, status: 'ok' },
   { text: 'system ready',                  delay: 1250, status: 'ok' },
 ]
 
 function BootScreen({ onDone }) {
   const [lines, setLines] = useState([])
   const [barW, setBarW] = useState(0)
+  const onDoneRef = useRef(onDone);
+  useEffect(() => {
+    onDoneRef.current = onDone;
+  });
 
   useEffect(() => {
-    BOOT_LINES.forEach((l, i) => {
-      setTimeout(() => setLines(p => [...p, l]), l.delay)
-    })
-    
-    const interval = setInterval(() => {
-      setBarW(prev => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          return 100
-        }
-        return prev + 2
-      })
-    }, 38)
+    let active = true;
+    const timeouts = [];
 
-    setTimeout(onDone, 2400)
-    return () => clearInterval(interval)
-  }, [])
+    BOOT_LINES.forEach((l) => {
+      const t = setTimeout(() => {
+        if (active) {
+          setLines(prev => {
+            if (prev.some(p => p.text === l.text)) return prev;
+            return [...prev, l];
+          });
+        }
+      }, l.delay);
+      timeouts.push(t);
+    });
+
+    const tBar = setTimeout(() => {
+      if (active) setBarW(100);
+    }, 1300);
+    timeouts.push(tBar);
+
+    const tDone = setTimeout(() => {
+      if (active && onDoneRef.current) onDoneRef.current();
+    }, 1800);
+    timeouts.push(tDone);
+
+    return () => {
+      active = false;
+      timeouts.forEach(clearTimeout);
+    };
+  }, []);
 
   return (
-    <div className="boot-overlay">
-      {/* Background Neon Glow Orbs */}
+    <>
       <div className="boot-glow-orb orb-purple" />
       <div className="boot-glow-orb orb-emerald" />
 
-      {/* Morphoglass Card */}
       <div className="boot-glass-card">
-        {/* Animated Neural Spinner */}
         <div className="boot-spinner-container">
           <div className="boot-spinner-outer" />
           <div className="boot-spinner-inner" />
@@ -71,16 +88,16 @@ function BootScreen({ onDone }) {
         </div>
 
         <div className="boot-logo">
-          <span>Chem</span>pilot <span style={{ color: '#38bdf8', fontSize: '0.65em', fontWeight: 600 }}>OS</span>
+          <span>Engineer</span>OS
         </div>
-        <div className="boot-sub">TERRA NOVA OS · V5.0 (QUANTUM LEAP)</div>
+        <div className="boot-sub">TERRA NOVA OS KERNEL</div>
 
         <div className="boot-log">
           {lines.map((l, i) => (
             <div key={i} className="boot-log-line">
-              <span className="boot-log-prefix">❯</span>
+              <span className="boot-log-prefix">&gt;</span>
               <span className="boot-log-text">{l.text}</span>
-              <span className="boot-log-ok">✓ READY</span>
+              <span className="boot-log-ok">[{l.status === 'ok' ? 'OK' : 'WARN'}]</span>
             </div>
           ))}
         </div>
@@ -88,43 +105,64 @@ function BootScreen({ onDone }) {
         <div className="boot-bar">
           <div className="boot-bar-fill" style={{ width: `${barW}%` }} />
         </div>
-        <div className="boot-progress-percent">
-          LOADING CORES ({Math.round(barW)}%)
-        </div>
+        <div className="boot-progress-percent">{Math.round(barW)}%</div>
       </div>
-    </div>
+    </>
   )
 }
 
-// ── NAV STRUCTURE ──────────────────────────────
+// ── NAV & META ───────────────────────────────────
 const NAV = [
-  { id: 'home',      Icon: LayoutDashboard, label: 'Dashboard',          group: 'SYSTEM' },
-  { id: 'pfd',       Icon: Workflow,        label: 'PFD Builder',        group: 'SYSTEM', badge: 'NEW' },
-  { id: 'hub',       Icon: LayoutGrid,      label: 'Calculator Hub',     group: 'SYSTEM' },
-  { id: 'formulas',  Icon: BookOpen,        label: 'Formula Library',    group: 'SYSTEM' },
-  { id: 'library',   Icon: Library,         label: 'Bookmart Library',   group: 'SYSTEM', badge: 'NEW' },
-  { id: 'distill',   Icon: FlaskConical,    label: 'Distillation Design',group: 'CHEMENG', badge: 'NEW' },
-  { id: 'converter', Icon: ArrowLeftRight,  label: 'Unit Converter',     group: 'CHEMENG' },
-  { id: 'mass',      Icon: Scale,           label: 'Mass Balance',       group: 'CHEMENG' },
-  { id: 'energy',    Icon: Zap,             label: 'Energy Balance',     group: 'CHEMENG' },
-  { id: 'thermo',    Icon: Thermometer,     label: 'Thermodynamics',     group: 'CHEMENG' },
-  { id: 'reaction',  Icon: Atom,            label: 'Reaction Eng.',      group: 'CHEMENG' },
-  { id: 'ai',        Icon: BrainCircuit,    label: 'AI Companion',       group: 'AI' },
+  // CORE OS
+  { id: 'home',      Icon: LayoutDashboard, label: 'Workspace',          group: 'CORE OS' },
+  { id: 'ai',        Icon: BrainCircuit,    label: 'Terra AI',           group: 'CORE OS' },
+  
+  // GLOBAL ECOSYSTEM
+  { id: 'sims',      Icon: PlaySquare,      label: 'Simulations',        group: 'ECOSYSTEM', badge: 'SOON' },
+  { id: 'hub',       Icon: LayoutGrid,      label: 'Calculator Hub',     group: 'ECOSYSTEM' },
+  { id: 'formulas',  Icon: BookOpen,        label: 'Formula Hub',        group: 'ECOSYSTEM' },
+  { id: 'library',   Icon: Library,         label: 'Engineering Library',group: 'ECOSYSTEM' },
+  { id: 'research',  Icon: Telescope,       label: 'AI Research',        group: 'ECOSYSTEM' },
+  { id: 'games',     Icon: Gamepad2,        label: 'Engineering Games',  group: 'ECOSYSTEM', badge: 'SOON' },
+  { id: 'thesis',    Icon: GraduationCap,   label: 'Thesis Studio',      group: 'ECOSYSTEM' },
+
+  // CHEMICAL ENGINEERING MODULE
+  { id: 'pfd',       Icon: Workflow,        label: 'PFD Builder',        group: 'CHEMICAL ENGINEERING' },
+  { id: 'distill',   Icon: FlaskConical,    label: 'Distillation Design',group: 'CHEMICAL ENGINEERING' },
+  { id: 'mass',      Icon: Scale,           label: 'Mass Balance',       group: 'CHEMICAL ENGINEERING' },
+  { id: 'energy',    Icon: Zap,             label: 'Energy Balance',     group: 'CHEMICAL ENGINEERING' },
+  { id: 'thermo',    Icon: Thermometer,     label: 'Thermodynamics',     group: 'CHEMICAL ENGINEERING' },
+  { id: 'reaction',  Icon: Atom,            label: 'Reaction Eng.',      group: 'CHEMICAL ENGINEERING' },
+  { id: 'converter', Icon: ArrowLeftRight,  label: 'Unit Converter',     group: 'CHEMICAL ENGINEERING' },
+
+  // FUTURE ENGINEERING MODULES
+  { id: 'mech',      Icon: Wrench,          label: 'Mechanical',         group: 'FUTURE MODULES', badge: 'SOON' },
+  { id: 'civil',     Icon: Building2,       label: 'Civil',              group: 'FUTURE MODULES', badge: 'SOON' },
+  { id: 'elec',      Icon: Cpu,             label: 'Electrical',         group: 'FUTURE MODULES', badge: 'SOON' },
+  { id: 'ind',       Icon: Factory,         label: 'Industrial',         group: 'FUTURE MODULES', badge: 'SOON' },
 ]
 
 const PAGE_META = {
-  home:      { title: 'Dashboard',            desc: 'Terra Nova Intelligence · Engineering OS' },
-  pfd:       { title: 'PFD Builder',          desc: 'Drag-drop process flow diagram designer' },
-  hub:       { title: 'Calculator Hub',       desc: '19+ calculators · 5 disciplines · AI solver' },
-  formulas:  { title: 'Formula Library',      desc: '30+ formulas · searchable · bookmark favorites' },
-  library:   { title: 'Bookmarks',            desc: 'Reference books, PDF translation, and AI annotation' },
+  home:      { title: 'Workspace',            desc: 'Terra Nova Intelligence · EngineerOS' },
+  ai:        { title: 'Terra AI',             desc: 'Multi-disciplinary Intelligence Engine' },
+  sims:      { title: 'Simulations',          desc: 'Global Physics and Plant Simulation Hub' },
+  hub:       { title: 'Calculator Hub',       desc: 'Universal Engineering Calculator Directory' },
+  formulas:  { title: 'Formula Hub',          desc: 'Searchable Engineering Formula Reference' },
+  library:   { title: 'Engineering Library',  desc: 'Textbooks, Documents, and AI Annotation' },
+  research:  { title: 'AI Research',          desc: 'Automated Literature Review & Aggregation' },
+  games:     { title: 'Engineering Games',    desc: 'Interactive Plant Operations & Quizzes' },
+  thesis:    { title: 'Thesis Studio',        desc: 'Advanced Writing & Citation Assistant' },
+  pfd:       { title: 'PFD Builder',          desc: 'Process Flow Diagram Designer' },
   distill:   { title: 'Distillation Design',  desc: 'Fenske-Underwood-Gilliland shortcut method' },
   converter: { title: 'Unit Converter',       desc: '8 categories · 50+ units' },
   mass:      { title: 'Mass Balance',         desc: 'Single stream · mixer · reactor · separator' },
   energy:    { title: 'Energy Balance',       desc: 'Sensible · latent · HX · combustion' },
   thermo:    { title: 'Thermodynamics',       desc: 'Ideal gas · enthalpy · isentropic · Cp/Cv' },
   reaction:  { title: 'Reaction Engineering', desc: 'CSTR · PFR · Batch · Arrhenius' },
-  ai:        { title: 'AI Companion',         desc: 'Claude AI · Chemical Engineering Mentor' },
+  mech:      { title: 'Mechanical Engineering',desc: 'CAD, Stress Analysis, Gear Design' },
+  civil:     { title: 'Civil Engineering',    desc: 'Structural Analysis, Concrete, Beam Solver' },
+  elec:      { title: 'Electrical Engineering',desc: 'Circuits, Power Systems, Signals' },
+  ind:       { title: 'Industrial Engineering',desc: 'Lean Ops, Supply Chain, Operations Research' },
 }
 
 // ── DASHBOARD COMPONENT IMPORTED FROM ./components/Dashboard.jsx ──────────────────
@@ -180,11 +218,11 @@ const DEFAULT_FLOWSHEET_2 = {
 }
 
 // Seed default templates if empty
-if (!localStorage.getItem('chempilot_pfd_proj-default-1')) {
-  localStorage.setItem('chempilot_pfd_proj-default-1', JSON.stringify(DEFAULT_FLOWSHEET_1))
+if (!localStorage.getItem('engineeros_pfd_proj-default-1')) {
+  localStorage.setItem('engineeros_pfd_proj-default-1', JSON.stringify(DEFAULT_FLOWSHEET_1))
 }
-if (!localStorage.getItem('chempilot_pfd_proj-default-2')) {
-  localStorage.setItem('chempilot_pfd_proj-default-2', JSON.stringify(DEFAULT_FLOWSHEET_2))
+if (!localStorage.getItem('engineeros_pfd_proj-default-2')) {
+  localStorage.setItem('engineeros_pfd_proj-default-2', JSON.stringify(DEFAULT_FLOWSHEET_2))
 }
 
 // ── ROOT APP ───────────────────────────────────
@@ -195,14 +233,14 @@ export default function App() {
   const [clock, setClock] = useState(new Date())
   const [aiDrawerOpen, setAiDrawerOpen] = useState(false)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
-    return localStorage.getItem('chempilot_sidebar_collapsed') === 'true'
+    return localStorage.getItem('engineeros_sidebar_collapsed') === 'true'
   })
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
   const [ambientMode, setAmbientMode] = useState(() => {
-    return localStorage.getItem('chempilot_ambient_mode') || 'COSMIC'
+    return localStorage.getItem('engineeros_ambient_mode') || 'COSMIC'
   })
   const [motionMode, setMotionMode] = useState(() => {
-    return localStorage.getItem('chempilot_motion_mode') || 'FLUID'
+    return localStorage.getItem('engineeros_motion_mode') || 'FLUID'
   })
   // Toast notification state
   const [toast, setToast] = useState(null) // { type: 'success'|'error', message: string }
@@ -212,8 +250,8 @@ export default function App() {
   const projectInputRef = useRef(null)
 
   // Authentication State
-  const [authToken, setAuthToken] = useState(() => localStorage.getItem('chempilot_auth_token') || '')
-  const [authUsername, setAuthUsername] = useState(() => localStorage.getItem('chempilot_auth_username') || '')
+  const [authToken, setAuthToken] = useState(() => localStorage.getItem('engineeros_auth_token') || '')
+  const [authUsername, setAuthUsername] = useState(() => localStorage.getItem('engineeros_auth_username') || '')
   const [authModalOpen, setAuthModalOpen] = useState(false)
 
   const showToast = (type, message) => {
@@ -222,7 +260,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    localStorage.setItem('chempilot_ambient_mode', ambientMode)
+    localStorage.setItem('engineeros_ambient_mode', ambientMode)
     if (ambientMode === 'FLAT') {
       document.body.classList.add('theme-flat')
       document.body.classList.remove('theme-cosmic')
@@ -233,7 +271,7 @@ export default function App() {
   }, [ambientMode])
 
   useEffect(() => {
-    localStorage.setItem('chempilot_motion_mode', motionMode)
+    localStorage.setItem('engineeros_motion_mode', motionMode)
     if (motionMode === 'REDUCED') {
       document.body.classList.add('motion-reduced')
     } else {
@@ -244,7 +282,7 @@ export default function App() {
   const toggleSidebar = () => {
     setIsSidebarCollapsed(prev => {
       const next = !prev
-      localStorage.setItem('chempilot_sidebar_collapsed', next ? 'true' : 'false')
+      localStorage.setItem('engineeros_sidebar_collapsed', next ? 'true' : 'false')
       return next
     })
   }
@@ -260,7 +298,7 @@ export default function App() {
 
   // Projects store
   const [projectsList, setProjectsList] = useState(() => {
-    const saved = localStorage.getItem('chempilot_projects')
+    const saved = localStorage.getItem('engineeros_projects')
     if (saved) {
       try {
         const parsed = JSON.parse(saved)
@@ -274,7 +312,7 @@ export default function App() {
   })
 
   const [currentProjectId, setCurrentProjectId] = useState(() => {
-    const saved = localStorage.getItem('chempilot_current_project')
+    const saved = localStorage.getItem('engineeros_current_project')
     return saved || 'proj-default-1'
   })
 
@@ -288,7 +326,7 @@ export default function App() {
     try {
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i)
-        if (key && key.startsWith('chempilot_pfd_')) {
+        if (key && key.startsWith('engineeros_pfd_')) {
           const raw = localStorage.getItem(key)
           if (raw) {
             const data = JSON.parse(raw)
@@ -317,16 +355,16 @@ export default function App() {
     const handleRoute = (e) => {
       if (e.detail) setActive(e.detail)
     }
-    window.addEventListener('chempilot_route_tab', handleRoute)
-    return () => window.removeEventListener('chempilot_route_tab', handleRoute)
+    window.addEventListener('engineeros_route_tab', handleRoute)
+    return () => window.removeEventListener('engineeros_route_tab', handleRoute)
   }, [])
 
   useEffect(() => {
-    localStorage.setItem('chempilot_projects', JSON.stringify(projectsList))
+    localStorage.setItem('engineeros_projects', JSON.stringify(projectsList))
   }, [projectsList])
 
   useEffect(() => {
-    localStorage.setItem('chempilot_current_project', currentProjectId)
+    localStorage.setItem('engineeros_current_project', currentProjectId)
   }, [currentProjectId])
 
   // Sync projects from cloud DB on login or startup
@@ -357,7 +395,7 @@ export default function App() {
                 if (detailRes.ok) {
                   const detailData = await detailRes.json()
                   if (detailData.flowsheet_json) {
-                    localStorage.setItem('chempilot_pfd_' + cp.id, detailData.flowsheet_json)
+                    localStorage.setItem('engineeros_pfd_' + cp.id, detailData.flowsheet_json)
                   }
                 }
               } catch (detailErr) {
@@ -366,7 +404,7 @@ export default function App() {
             }
 
             // Force reload current active flowsheet if updated
-            window.dispatchEvent(new CustomEvent('chempilot_force_pfd_reload'))
+            window.dispatchEvent(new CustomEvent('engineeros_force_pfd_reload'))
           }
         }
       } catch (err) {
@@ -447,10 +485,10 @@ export default function App() {
       }
     }
     setProjectsList(p => p.filter(p => p.id !== id))
-    localStorage.removeItem('chempilot_pfd_' + id)
-    localStorage.removeItem('chempilot_calc_' + id)
-    localStorage.removeItem('chempilot_distill_' + id)
-    localStorage.removeItem('chempilot_ai_history_' + id)
+    localStorage.removeItem('engineeros_pfd_' + id)
+    localStorage.removeItem('engineeros_calc_' + id)
+    localStorage.removeItem('engineeros_distill_' + id)
+    localStorage.removeItem('engineeros_ai_history_' + id)
   }
 
   const handleExportProjects = () => {
@@ -458,17 +496,17 @@ export default function App() {
     projectsList.forEach(p => {
       data[p.id] = {
         meta: p,
-        pfd: localStorage.getItem('chempilot_pfd_' + p.id),
-        calc: localStorage.getItem('chempilot_calc_' + p.id),
-        distill: localStorage.getItem('chempilot_distill_' + p.id),
-        ai: localStorage.getItem('chempilot_ai_history_' + p.id)
+        pfd: localStorage.getItem('engineeros_pfd_' + p.id),
+        calc: localStorage.getItem('engineeros_calc_' + p.id),
+        distill: localStorage.getItem('engineeros_distill_' + p.id),
+        ai: localStorage.getItem('engineeros_ai_history_' + p.id)
       }
     })
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = `chempilot-workspace-${new Date().toISOString().slice(0, 10)}.json`
+    a.download = `EngineerOS-workspace-${new Date().toISOString().slice(0, 10)}.json`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -487,10 +525,10 @@ export default function App() {
           const entry = imported[id]
           if (entry.meta) {
             newProjects.push(entry.meta)
-            if (entry.pfd) localStorage.setItem('chempilot_pfd_' + id, entry.pfd)
-            if (entry.calc) localStorage.setItem('chempilot_calc_' + id, entry.calc)
-            if (entry.distill) localStorage.setItem('chempilot_distill_' + id, entry.distill)
-            if (entry.ai) localStorage.setItem('chempilot_ai_history_' + id, entry.ai)
+            if (entry.pfd) localStorage.setItem('engineeros_pfd_' + id, entry.pfd)
+            if (entry.calc) localStorage.setItem('engineeros_calc_' + id, entry.calc)
+            if (entry.distill) localStorage.setItem('engineeros_distill_' + id, entry.distill)
+            if (entry.ai) localStorage.setItem('engineeros_ai_history_' + id, entry.ai)
           }
         })
         if (newProjects.length > 0) {
@@ -503,7 +541,7 @@ export default function App() {
           showToast('success', `${newProjects.length} project(s) imported.`)
         }
       } catch (err) {
-        showToast('error', 'Invalid file format. Please use a valid ChemPilot backup.')
+        showToast('error', 'Invalid file format. Please use a valid EngineerOS backup.')
       }
     }
     reader.readAsText(file)
@@ -542,7 +580,7 @@ export default function App() {
           </button>
           <div className="sidebar-brand">
             <div className="brand-wordmark">
-              {!isSidebarCollapsed && <span><span className="em">Chem</span>pilot OS</span>}
+              {!isSidebarCollapsed && <span><span className="em">Engineer</span>OS</span>}
               <button 
                 className="sidebar-toggle-btn" 
                 onClick={toggleSidebar} 
@@ -674,12 +712,12 @@ export default function App() {
               >
                 <Menu size={15} />
               </button>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div className="topbar-brand-container" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <div className="status-led" style={{ width: 4, height: 4 }} />
-                <span>chempilot-os</span>
+                <span className="topbar-brand-text">EngineerOS-os</span>
               </div>
-              <span className="topbar-sep">╱</span>
-              <span>{meta.title}</span>
+              <span className="topbar-sep topbar-sep-text">╱</span>
+              <span className="topbar-page-title">{meta.title}</span>
             </div>
              <div className="topbar-right">
               <button 
@@ -708,8 +746,8 @@ export default function App() {
               {authToken ? (
                 <button 
                   onClick={() => {
-                    localStorage.removeItem('chempilot_auth_token')
-                    localStorage.removeItem('chempilot_auth_username')
+                    localStorage.removeItem('engineeros_auth_token')
+                    localStorage.removeItem('engineeros_auth_username')
                     setAuthToken('')
                     setAuthUsername('')
                     showToast('success', 'Logged out. Guest Mode active.')
@@ -772,6 +810,28 @@ export default function App() {
             {active === 'energy'    && <EnergyBalance />}
             {active === 'thermo'    && <Thermodynamics />}
             {active === 'reaction'  && <ReactionEng />}
+            
+            {active === 'thesis'    && <ThesisStudio key={currentProjectId} projectId={currentProjectId} appContext={appContext} />}
+            {active === 'research'  && <AIResearcher key={currentProjectId} projectId={currentProjectId} />}
+
+            {/* EngineerOS Future Modules Placeholders */}
+            {['sims', 'games', 'mech', 'civil', 'elec', 'ind'].includes(active) && (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '60vh', textAlign: 'center', color: 'var(--text-2)' }}>
+                <div className="status-led" style={{ width: 12, height: 12, background: 'var(--accent)', boxShadow: '0 0 20px var(--accent)', marginBottom: 24, animation: 'pulse 2s infinite' }} />
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 500, color: '#fff', marginBottom: 8 }}>Module in Development</h2>
+                <p style={{ maxWidth: 400, lineHeight: 1.5 }}>
+                  This module is part of the EngineerOS expansion roadmap. It will be available in a future quantum leap update.
+                </p>
+                <button 
+                  className="hud-toggle-pill pill-active" 
+                  style={{ marginTop: 24 }}
+                  onClick={() => setActive('home')}
+                >
+                  Return to Workspace
+                </button>
+              </div>
+            )}
+
             {active === 'ai'        && (
               <AICompanion 
                 key={currentProjectId} 

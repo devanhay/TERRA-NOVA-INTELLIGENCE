@@ -44,8 +44,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
         setErrorMsg('Registrasi berhasil! Silakan masuk dengan akun Anda.');
       } else {
         // Login success
-        localStorage.setItem('chempilot_auth_token', data.token);
-        localStorage.setItem('chempilot_auth_username', data.user.username);
+        localStorage.setItem('engineeros_auth_token', data.token);
+        localStorage.setItem('engineeros_auth_username', data.user.username);
         onAuthSuccess(data.token, data.user.username);
         onClose();
       }
@@ -69,7 +69,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
         <div className="glass-modal-header" style={{ marginBottom: 12 }}>
           <span className="glass-modal-title" style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--accent)' }}>
             <KeyRound size={16} />
-            {isRegister ? 'Register ChemPilot' : 'Login ChemPilot'}
+            {isRegister ? 'Register EngineerOS' : 'Login EngineerOS'}
           </span>
           <button className="glass-modal-close" onClick={onClose}><X size={16}/></button>
         </div>

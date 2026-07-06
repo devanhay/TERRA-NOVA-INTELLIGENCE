@@ -2181,42 +2181,42 @@ body::after {
     padding-right: 12px !important;
   }
 
-  /* Compact auth pill on mobile */
-  .topbar-auth-pill .hud-toggle-pill {
-    padding: 4px 8px !important;
-    font-size: 0.52rem !important;
-    max-width: 100px;
+  /* Prevent shrinking of buttons */
+  .mobile-menu-toggle {
+    flex-shrink: 0 !important;
+  }
+  .topbar-auth-pill {
+    flex-shrink: 0 !important;
+  }
+
+  /* Truncate the page title text on mobile to fit the screen */
+  .topbar-page-title {
+    display: inline-block;
+    max-width: 140px;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
+    vertical-align: middle;
   }
 
-  .topbar-auth-pill .auth-pill-text {
-    display: none;
-  }
-}
-
-.distillation-split-grid {
-  grid-template-columns: 320px 1fr;
-}
-
-@media (max-width: 900px) {
-  .distillation-split-grid {
-    grid-template-columns: 1fr !important;
-  }
-  
-  .os-topbar .hud-toggle-pill,
-  .os-topbar .hud-separator {
+  /* Hide brand text & separator to make space */
+  .topbar-brand-text,
+  .topbar-sep-text {
     display: none !important;
   }
 
-  /* But keep the auth pill visible (override the above) */
-  .os-topbar .topbar-auth-pill .hud-toggle-pill {
-    display: inline-flex !important;
+  /* Keep the text inside the auth button visible but clean/small */
+  .topbar-auth-pill .auth-pill-text {
+    display: inline !important;
+    font-size: 0.65rem !important;
+  }
+
+  .topbar-auth-pill .hud-toggle-pill {
     padding: 4px 10px !important;
-    font-size: 0.55rem !important;
+    font-size: 0.65rem !important;
   }
 }
+
 
 /* ── PREMIUM MOBILE VIEWPORT SAFETY PASS (<= 600px) ── */
 @media (max-width: 600px) {
